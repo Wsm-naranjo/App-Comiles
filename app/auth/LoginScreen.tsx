@@ -1,8 +1,8 @@
-import api, { getCsrfToken } from "@/services/api";
+import api, { getCsrfToken, resetSession } from "@/services/api";
 import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect, useRouter } from "expo-router";
-import { useCallback, useState } from "react";
+import { useRouter } from "expo-router";
+import { useState } from "react";
 import {
   Image,
   Pressable,
@@ -20,18 +20,6 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
-  useFocusEffect(
-    useCallback(() => {
-      const clearStorege = async () => {
-        // clearStorege
-        // console.log(await AsyncStorage.getAllKeys())
-        // console.log(await AsyncStorage.getItem("userData"))
-      };
-
-      clearStorege();
-    }, [])
-  );
-
   const handleLogin = async () => {
     setError("");
 
@@ -47,10 +35,13 @@ export default function LoginScreen() {
     }
 
     try {
+      console.log("0. Reseteando sesión completamente...");
+      await resetSession();
+
       console.log("1. Obteniendo token CSRF...");
 
-      // 1. Obtener el token CSRF
-      const token = await getCsrfToken();
+      // 1. Obtener un token CSRF fresco
+      const token = await getCsrfToken(true);
 
       if (token) {
         console.log("2. Token CSRF obtenido, enviando credenciales...");
@@ -59,6 +50,11 @@ export default function LoginScreen() {
       }
 
       // 2. Hacer la solicitud de login
+      console.log("2. Enviando credenciales:", {
+        name_usuario: username,
+        password: password ? "[OCULTA]" : "[VACÍA]",
+      });
+
       const response = await api.post("login", {
         name_usuario: username,
         password: password,

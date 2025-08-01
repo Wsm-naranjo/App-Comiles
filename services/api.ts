@@ -15,8 +15,46 @@ const api = axios.create({
 // Variable para almacenar el token CSRF
 let csrfToken: string | null = null;
 
+// Función para limpiar el token CSRF
+export const clearCsrfToken = (): void => {
+  console.log("Limpiando token CSRF...");
+  csrfToken = null;
+};
+
+// Función para reset completo de la sesión
+export const resetSession = async (): Promise<void> => {
+  console.log("Iniciando reset completo de sesión...");
+  
+  // Limpiar token CSRF
+  clearCsrfToken();
+  
+  // Limpiar AsyncStorage
+  try {
+    await AsyncStorage.clear();
+    console.log("AsyncStorage completamente limpiado");
+  } catch (error) {
+    console.error("Error limpiando AsyncStorage:", error);
+  }
+  
+  // Intentar hacer logout en el servidor
+  try {
+    await api.post("/logout");
+    console.log("Logout en servidor exitoso");
+  } catch (error) {
+    console.log("Error en logout del servidor (ignorado):", error);
+  }
+  
+  console.log("Reset de sesión completo");
+};
+
 // Función para obtener el token CSRF
-export const getCsrfToken = async (): Promise<string | null> => {
+export const getCsrfToken = async (forceRefresh: boolean = false): Promise<string | null> => {
+  // Si ya tenemos un token y no se fuerza el refresh, devolverlo
+  if (csrfToken && !forceRefresh) {
+    console.log("Usando token CSRF existente");
+    return csrfToken;
+  }
+  
   try {
     console.log("1. Solicitando CSRF cookie...");
 

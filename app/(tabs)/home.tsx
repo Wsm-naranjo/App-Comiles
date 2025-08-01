@@ -1,7 +1,7 @@
 import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -15,24 +15,41 @@ export default function HomeScreen() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const router = useRouter();
 
-  useEffect(() => {
-    loadUserData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      console.log("Home screen focused, loading user data...");
+      loadUserData();
+    }, [])
+  );
 
   const loadUserData = async () => {
     try {
+      // Limpiar estado anterior
+      setUserData(null);
+
       const data = await AsyncStorage.getItem("userData");
       if (data) {
-        setUserData(JSON.parse(data));
+        const parsedData = JSON.parse(data);
+        console.log(
+          "Cargando datos de usuario:",
+          parsedData.nombres,
+          parsedData.apellidos
+        );
+        setUserData(parsedData);
+      } else {
+        console.log("No hay datos de usuario en storage");
+        // Si no hay datos, redirigir al login
+        router.replace("/");
       }
     } catch (error) {
       console.error("Error loading user data:", error);
+      router.replace("/");
     }
   };
 
   const handleLogout = async () => {
-    console.log('Iniciando logout desde home...');
-    router.replace('/plugins/logout');
+    console.log("Iniciando logout desde home...");
+    router.replace("/plugins/logout");
   };
 
   return (

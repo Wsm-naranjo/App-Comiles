@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
 import {
   Alert,
   Image,
@@ -77,15 +77,22 @@ export default function ProfileScreen() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const router = useRouter();
 
-  useEffect(() => {
-    loadUserData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      console.log('Profile screen focused, loading user data...');
+      loadUserData();
+    }, [])
+  );
 
   const loadUserData = async () => {
     try {
+      // Limpiar estado anterior
+      setUserData(null);
+      
       const data = await AsyncStorage.getItem('userData');
       if (data) {
         const parsedData = JSON.parse(data);
+        console.log('Cargando perfil de usuario:', parsedData.nombres, parsedData.apellidos);
         // Agregar datos simulados para el perfil
         setUserData({
           ...parsedData,
@@ -93,9 +100,14 @@ export default function ProfileScreen() {
           rango: 'Teniente',
           unidad: 'Ala de Combate No. 21',
         });
+      } else {
+        console.log('No hay datos de usuario en storage');
+        // Si no hay datos, redirigir al login
+        router.replace('/');
       }
     } catch (error) {
       console.error('Error loading user data:', error);
+      router.replace('/');
     }
   };
 
