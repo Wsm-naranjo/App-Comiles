@@ -1,4 +1,4 @@
-import api, { getCsrfToken } from '@/services/api';
+import api, { getCsrfToken, resetSession } from '@/services/api';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Feather } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -47,10 +47,13 @@ export default function LoginScreen() {
     }
 
     try {
+      console.log("0. Reseteando sesión completamente...");
+      await resetSession();
+
       console.log("1. Obteniendo token CSRF...");
 
-      // 1. Obtener el token CSRF
-      const token = await getCsrfToken();
+      // 1. Obtener un token CSRF fresco
+      const token = await getCsrfToken(true);
 
       if (token) {
         console.log("2. Token CSRF obtenido, enviando credenciales...");
@@ -60,6 +63,11 @@ export default function LoginScreen() {
 
       console.log({username,password})
       // 2. Hacer la solicitud de login
+      console.log("2. Enviando credenciales:", {
+        name_usuario: username,
+        password: password ? "[OCULTA]" : "[VACÍA]",
+      });
+
       const response = await api.post("login", {
         name_usuario: username,
         password: password,

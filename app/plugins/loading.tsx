@@ -36,6 +36,14 @@ export default function LoadingScreen() {
       console.log('Datos de usuario encontrados:', !!userData);
       
       if (userData) {
+        const parsedData = JSON.parse(userData);
+        console.log('=== DATOS DE USUARIO CARGADOS ===');
+        console.log('Nombre:', parsedData.nombres);
+        console.log('Apellido:', parsedData.apellidos);
+        console.log('ID Usuario:', parsedData.idusuario);
+        console.log('Username:', parsedData.name_usuario);
+        console.log('Email:', parsedData.email);
+        console.log('================================');
         console.log('Navegando a home...');
         router.replace('/(tabs)/home');
       } else {
