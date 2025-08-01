@@ -1,10 +1,11 @@
-import useUserBooks from "@/hooks/useUserBooks";
-import { useUserData } from "@/hooks/useUserData";
-import { Feather } from "@expo/vector-icons";
-import { useFocusEffect, useRouter } from "expo-router";
-import { useCallback } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import LibrosDebug from '@/components/LibrosDebug';
+import useUserBooks from '@/hooks/useUserBooks';
+import { useUserData } from '@/hooks/useUserData';
+import { Feather } from '@expo/vector-icons';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback } from 'react';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -18,17 +19,17 @@ export default function HomeScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      console.log("Home screen focused, checking user data...");
+      console.log('Home screen focused, checking user data...');
       if (!userData) {
-        console.log("No hay datos de usuario, redirigiendo al login");
-        router.replace("/");
+        console.log('No hay datos de usuario, redirigiendo al login');
+        router.replace('/');
       }
     }, [userData])
   );
 
   const handleLogout = async () => {
-    console.log("Iniciando logout desde home...");
-    router.replace("/plugins/logout");
+    console.log('Iniciando logout desde home...');
+    router.replace('/plugins/logout');
   };
 
   return (
@@ -38,20 +39,19 @@ export default function HomeScreen() {
         <View className="flex-row justify-between items-center p-6 pb-4">
           <View className="flex-row items-center">
             <Image
-              source={require("@/assets/images/Escudo_Fuerza_Aerea_Ecuador.png")}
+              source={require('@/assets/images/Escudo_Fuerza_Aerea_Ecuador.png')}
               className="w-12 h-12 mr-3"
               resizeMode="contain"
             />
             <View>
               <Text className="text-white text-lg font-bold">
-                Bienvenido, {userData?.nombres || "Usuario"}
+                Bienvenido, {userData?.nombres || 'Usuario'}
               </Text>
             </View>
           </View>
           <TouchableOpacity
             onPress={handleLogout}
-            className="p-2 bg-red-600 rounded-lg"
-          >
+            className="p-2 bg-red-600 rounded-lg">
             <Feather name="log-out" size={20} color="white" />
           </TouchableOpacity>
         </View>
@@ -81,7 +81,7 @@ export default function HomeScreen() {
             <View className="bg-blue-600 p-4 rounded-xl flex-1 mr-2">
               <Feather name="book-open" size={24} color="white" />
               <Text className="text-white text-2xl font-bold mt-2">
-                {librosLoading ? "..." : cantidadLibros}
+                {librosLoading ? '...' : cantidadLibros}
               </Text>
               <Text className="text-blue-200 text-sm">Libros Disponibles</Text>
               {librosError && (
@@ -104,9 +104,8 @@ export default function HomeScreen() {
             <Text className="text-white text-xl font-bold">Mis Libros</Text>
             {cantidadLibros > 3 && (
               <TouchableOpacity
-                onPress={() => router.push("/(tabs)/library")}
-                className="flex-row items-center"
-              >
+                onPress={() => router.push('/(tabs)/library')}
+                className="flex-row items-center">
                 <Text className="text-blue-400 text-sm mr-1">Ver todos</Text>
                 <Feather name="arrow-right" size={16} color="#60A5FA" />
               </TouchableOpacity>
@@ -141,19 +140,17 @@ export default function HomeScreen() {
                 className="bg-gray-800 p-4 rounded-xl mb-4"
                 onPress={() => {
                   // Aquí puedes navegar al lector del libro
-                  console.log("Abrir libro:", libro.nombrelibro);
-                }}
-              >
+                  console.log('Abrir libro:', libro.nombrelibro);
+                }}>
                 <View className="flex-row items-center justify-between">
                   <View className="flex-1">
                     <Text
                       className="text-white font-semibold text-lg"
-                      numberOfLines={2}
-                    >
+                      numberOfLines={2}>
                       {libro.nombrelibro}
                     </Text>
                     <Text className="text-gray-400 text-sm mt-1">
-                      {libro.nombreasignatura} • Serie: {libro.serie || "N/A"}
+                      {libro.nombreasignatura} • Serie: {libro.serie || 'N/A'}
                     </Text>
                     <Text className="text-gray-500 text-xs mt-1">
                       Año: {libro.anio} • ID: {libro.idlibro}
@@ -191,8 +188,7 @@ export default function HomeScreen() {
             {/* Explorar - Para buscar libros */}
             <TouchableOpacity
               className="bg-purple-600 p-4 rounded-xl flex-1 mr-2 items-center"
-              onPress={() => router.push("/(tabs)/library")}
-            >
+              onPress={() => router.push('/(tabs)/library')}>
               <Feather name="search" size={24} color="white" />
               <Text className="text-white font-semibold mt-2 text-center">
                 Explorar
@@ -207,10 +203,9 @@ export default function HomeScreen() {
               className="bg-teal-600 p-4 rounded-xl flex-1 ml-2 items-center"
               onPress={() => {
                 // Aquí puedes navegar a la pantalla de notas
-                console.log("Navegar a Mis Notas");
+                console.log('Navegar a Mis Notas');
                 // router.push('/notas'); // cuando tengas la pantalla
-              }}
-            >
+              }}>
               <Feather name="edit-3" size={24} color="white" />
               <Text className="text-white font-semibold mt-2 text-center">
                 Mis Notas
@@ -261,7 +256,7 @@ export default function HomeScreen() {
         </View> */}
 
         {/* Debug Component - Solo para desarrollo */}
-        {/* <LibrosDebug /> */}
+        <LibrosDebug />
       </ScrollView>
     </SafeAreaView>
   );

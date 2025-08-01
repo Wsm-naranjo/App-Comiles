@@ -1,15 +1,16 @@
-import useSeries from "@/hooks/useSeries";
-import useUserBooks from "@/hooks/useUserBooks";
-import { Feather } from "@expo/vector-icons";
-import { useState } from "react";
+import useSeries from '@/hooks/useSeries';
+import useUserBooks from '@/hooks/useUserBooks';
+import { Feather } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import { useState } from 'react';
 import {
   ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Los libros ahora vienen de useUserBooks() - datos reales de la API
 
@@ -22,57 +23,57 @@ export default function LibraryScreen() {
   } = useUserBooks();
   const { seriesConLibros, isLoading: seriesLoading } = useSeries();
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedSerie, setSelectedSerie] = useState("Todas");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedSerie, setSelectedSerie] = useState('Todas');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // Crear lista de series para el filtro
   const seriesOptions = [
-    "Todas",
-    ...seriesConLibros.map((serie) => serie.nombre_serie),
+    'Todas',
+    ...seriesConLibros.map(serie => serie.nombre_serie),
   ];
 
   // Filtrar libros por búsqueda y serie
-  const filteredBooks = libros.filter((libro) => {
+  const filteredBooks = libros.filter(libro => {
     const matchesSearch =
       libro.nombrelibro.toLowerCase().includes(searchQuery.toLowerCase()) ||
       libro.nombreasignatura.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesSerie =
-      selectedSerie === "Todas" || libro.serie === selectedSerie;
+      selectedSerie === 'Todas' || libro.serie === selectedSerie;
     return matchesSearch && matchesSerie;
   });
 
   const getSerieColor = (serie: string) => {
     // Colores basados en el hash del nombre de la serie
     const colors = [
-      "text-blue-400",
-      "text-green-400",
-      "text-purple-400",
-      "text-yellow-400",
-      "text-red-400",
-      "text-pink-400",
-      "text-indigo-400",
-      "text-teal-400",
-      "text-orange-400",
+      'text-blue-400',
+      'text-green-400',
+      'text-purple-400',
+      'text-yellow-400',
+      'text-red-400',
+      'text-pink-400',
+      'text-indigo-400',
+      'text-teal-400',
+      'text-orange-400',
     ];
-    const hash = serie.split("").reduce((a, b) => a + b.charCodeAt(0), 0);
+    const hash = serie.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
     return colors[hash % colors.length];
   };
 
   const getSerieBgColor = (serie: string) => {
     // Colores de fondo basados en el hash del nombre de la serie
     const colors = [
-      "bg-blue-600",
-      "bg-green-600",
-      "bg-purple-600",
-      "bg-yellow-600",
-      "bg-red-600",
-      "bg-pink-600",
-      "bg-indigo-600",
-      "bg-teal-600",
-      "bg-orange-600",
+      'bg-blue-600',
+      'bg-green-600',
+      'bg-purple-600',
+      'bg-yellow-600',
+      'bg-red-600',
+      'bg-pink-600',
+      'bg-indigo-600',
+      'bg-teal-600',
+      'bg-orange-600',
     ];
-    const hash = serie.split("").reduce((a, b) => a + b.charCodeAt(0), 0);
+    const hash = serie.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
     return colors[hash % colors.length];
   };
 
@@ -88,19 +89,18 @@ export default function LibraryScreen() {
               </Text>
               <Text className="text-gray-400 text-sm">
                 {librosLoading
-                  ? "Cargando..."
+                  ? 'Cargando...'
                   : `${cantidadLibros} libros disponibles`}
               </Text>
             </View>
             <View className="flex-row">
               <TouchableOpacity
                 onPress={() =>
-                  setViewMode(viewMode === "grid" ? "list" : "grid")
+                  setViewMode(viewMode === 'grid' ? 'list' : 'grid')
                 }
-                className="p-2 bg-gray-800 rounded-lg mr-2"
-              >
+                className="p-2 bg-gray-800 rounded-lg mr-2">
                 <Feather
-                  name={viewMode === "grid" ? "list" : "grid"}
+                  name={viewMode === 'grid' ? 'list' : 'grid'}
                   size={20}
                   color="white"
                 />
@@ -124,7 +124,7 @@ export default function LibraryScreen() {
               name="search"
               size={20}
               color="#6B7280"
-              style={{ position: "absolute", left: 16, top: 16 }}
+              style={{ position: 'absolute', left: 16, top: 16 }}
             />
           </View>
 
@@ -139,21 +139,20 @@ export default function LibraryScreen() {
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              className="mb-4"
-            >
-              {seriesOptions.map((serie) => (
+              className="mb-4">
+              {seriesOptions.map(serie => (
                 <TouchableOpacity
                   key={serie}
-                  onPress={() => setSelectedSerie(serie)}
+                  // onPress={() => setSelectedSerie(serie)}
+                  // onPress={() => router.push('/book')}
+                  // onPress={() => console.log("XD")}
                   className={`mr-3 px-4 py-2 rounded-full ${
-                    selectedSerie === serie ? "bg-blue-600" : "bg-gray-800"
-                  }`}
-                >
+                    selectedSerie === serie ? 'bg-blue-600' : 'bg-gray-800'
+                  }`}>
                   <Text
                     className={`font-semibold ${
-                      selectedSerie === serie ? "text-white" : "text-gray-400"
-                    }`}
-                  >
+                      selectedSerie === serie ? 'text-white' : 'text-gray-400'
+                    }`}>
                     {serie}
                   </Text>
                 </TouchableOpacity>
@@ -180,28 +179,36 @@ export default function LibraryScreen() {
               <Feather name="book-open" size={48} color="#6B7280" />
               <Text className="text-gray-400 text-lg mt-4">
                 {libros.length === 0
-                  ? "No hay libros disponibles"
-                  : "No se encontraron libros"}
+                  ? 'No hay libros disponibles'
+                  : 'No se encontraron libros'}
               </Text>
               <Text className="text-gray-500 text-sm mt-2 text-center px-8">
                 {libros.length === 0
-                  ? "Contacta con tu institución para obtener acceso a libros"
-                  : "Intenta con otros términos de búsqueda o cambia la serie"}
+                  ? 'Contacta con tu institución para obtener acceso a libros'
+                  : 'Intenta con otros términos de búsqueda o cambia la serie'}
               </Text>
             </View>
-          ) : viewMode === "grid" ? (
+          ) : viewMode === 'grid' ? (
             <View className="flex-row flex-wrap justify-between">
-              {filteredBooks.map((libro) => (
+              {filteredBooks.map(libro => (
                 <TouchableOpacity
                   key={libro.idlibro}
                   className="w-[48%] bg-gray-800 p-4 rounded-xl mb-4"
                   onPress={() => {
-                    console.log("Abrir libro:", libro.nombrelibro);
-                  }}
-                >
+                    // "/Books/bookPage"
+                    router.push({
+                      pathname: '/Books/bookPage',
+                      params: {
+                        init: '1',
+                        final: '20',
+                        idasignatura: '10',
+                        nombreLibro: libro.weblibro,
+                      },
+                    });
+                  }}>
                   <View className="items-center mb-3">
                     <View className="w-20 h-28 bg-gray-700 rounded-lg mb-2 items-center justify-center">
-                      <Feather name="book" size={24} color="#6B7280" />
+                      {/* <Feather name="phone" size={24} color="#6B7280" /> */}
                     </View>
                     <View className="absolute top-0 right-0">
                       <Feather name="book-open" size={16} color="#3B82F6" />
@@ -210,14 +217,12 @@ export default function LibraryScreen() {
 
                   <Text
                     className="text-white font-bold text-sm mb-1 text-center"
-                    numberOfLines={2}
-                  >
+                    numberOfLines={2}>
                     {libro.nombrelibro}
                   </Text>
                   <Text
                     className="text-gray-400 text-xs mb-2 text-center"
-                    numberOfLines={1}
-                  >
+                    numberOfLines={1}>
                     {libro.nombreasignatura}
                   </Text>
 
@@ -235,10 +240,9 @@ export default function LibraryScreen() {
 
                   <View className="flex-row items-center justify-between">
                     <View
-                      className={`px-2 py-1 rounded-full ${getSerieBgColor(libro.serie || "default")}`}
-                    >
+                      className={`px-2 py-1 rounded-full ${getSerieBgColor(libro.serie || 'default')}`}>
                       <Text className="text-white text-xs font-semibold">
-                        {libro.serie || "N/A"}
+                        {libro.serie || 'N/A'}
                       </Text>
                     </View>
                     <Text className="text-gray-500 text-xs">{libro.anio}</Text>
@@ -248,14 +252,13 @@ export default function LibraryScreen() {
             </View>
           ) : (
             <View>
-              {filteredBooks.map((libro) => (
+              {filteredBooks.map(libro => (
                 <TouchableOpacity
                   key={libro.idlibro}
                   className="bg-gray-800 p-4 rounded-xl mb-4"
                   onPress={() => {
-                    console.log("Abrir libro:", libro.nombrelibro);
-                  }}
-                >
+                    // console.log('Abrir libro:', libro.nombrelibro);
+                  }}>
                   <View className="flex-row">
                     <View className="w-16 h-22 bg-gray-700 rounded-lg mr-4 items-center justify-center">
                       <Feather name="book" size={20} color="#6B7280" />
@@ -265,8 +268,7 @@ export default function LibraryScreen() {
                       <View className="flex-row items-start justify-between mb-1">
                         <Text
                           className="text-white font-bold text-base flex-1 mr-2"
-                          numberOfLines={2}
-                        >
+                          numberOfLines={2}>
                           {libro.nombrelibro}
                         </Text>
                         <Feather name="book-open" size={16} color="#3B82F6" />
@@ -278,10 +280,9 @@ export default function LibraryScreen() {
 
                       <View className="flex-row items-center mb-2">
                         <View
-                          className={`px-2 py-1 rounded-full mr-2 ${getSerieBgColor(libro.serie || "default")}`}
-                        >
+                          className={`px-2 py-1 rounded-full mr-2 ${getSerieBgColor(libro.serie || 'default')}`}>
                           <Text className="text-white text-xs font-semibold">
-                            {libro.serie || "N/A"}
+                            {libro.serie || 'N/A'}
                           </Text>
                         </View>
                         <Text className="text-gray-500 text-xs">
@@ -306,7 +307,7 @@ export default function LibraryScreen() {
                           ID: {libro.idlibro}
                         </Text>
                         <Text className="text-gray-500 text-xs">
-                          {libro.plus ? "Plus" : "Estándar"}
+                          {libro.plus ? 'Plus' : 'Estándar'}
                         </Text>
                       </View>
                     </View>
