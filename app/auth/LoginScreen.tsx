@@ -1,8 +1,8 @@
-import api, { getCsrfToken } from '@/services/api';
-import { Feather } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
+import api, { getCsrfToken } from "@/services/api";
+import { Feather } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useState } from "react";
 import {
   Image,
   Pressable,
@@ -10,13 +10,13 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
@@ -28,73 +28,73 @@ export default function LoginScreen() {
         // console.log(await AsyncStorage.getItem("userData"))
       };
 
-      clearStorege()
+      clearStorege();
     }, [])
   );
 
   const handleLogin = async () => {
-    setError('');
+    setError("");
 
     // Validar que los campos no estén vacíos
     if (!username.trim()) {
-      setError('Por favor ingresa tu nombre de usuario');
+      setError("Por favor ingresa tu nombre de usuario");
       return;
     }
 
     if (!password.trim()) {
-      setError('Por favor ingresa tu contraseña');
+      setError("Por favor ingresa tu contraseña");
       return;
     }
 
     try {
-      console.log('1. Obteniendo token CSRF...');
+      console.log("1. Obteniendo token CSRF...");
 
       // 1. Obtener el token CSRF
       const token = await getCsrfToken();
 
       if (token) {
-        console.log('2. Token CSRF obtenido, enviando credenciales...');
+        console.log("2. Token CSRF obtenido, enviando credenciales...");
       } else {
-        console.log('2. No se pudo obtener token CSRF, intentando sin él...');
+        console.log("2. No se pudo obtener token CSRF, intentando sin él...");
       }
 
       // 2. Hacer la solicitud de login
-      const response = await api.post('login', {
+      const response = await api.post("login", {
         name_usuario: username,
         password: password,
       });
 
-      console.log('3. Respuesta del servidor:', response.data);
+      console.log("3. Respuesta del servidor:", response.data);
 
       // Verificar si la respuesta contiene datos del usuario (login exitoso)
       if (response.data && response.data.idusuario) {
         // Guardar los datos del usuario en AsyncStorage
-        await AsyncStorage.setItem('userData', JSON.stringify(response.data));
+        await AsyncStorage.setItem("userData", JSON.stringify(response.data));
 
-        console.log('Login exitoso!');
-        console.log('Usuario:', response.data.nombres, response.data.apellidos);
-        console.log('ID Usuario:', response.data.idusuario);
-        console.log('Navegando al dashboard...');
+        console.log("Login exitoso!");
+        console.log("Usuario:", response.data.nombres, response.data.apellidos);
+        console.log("ID Usuario:", response.data.idusuario);
+        console.log("Navegando al loading screen...");
 
-        // Navegar al dashboard
-        router.replace('/dashboard');
-      } else if (response.data && response.data.status === 'ok') {
+        // Navegar al loading screen
+        router.replace("/plugins/loading");
+      } else if (response.data && response.data.status === "ok") {
         // Fallback para el formato con status
         if (response.data.token) {
-          await AsyncStorage.setItem('userToken', response.data.token);
+          await AsyncStorage.setItem("userToken", response.data.token);
         }
         if (response.data.datos) {
           await AsyncStorage.setItem(
-            'userData',
+            "userData",
             JSON.stringify(response.data.datos)
           );
         }
-        router.replace('/dashboard');
+        router.replace("/plugins/loading");
       } else {
-        setError('Respuesta inválida del servidor');
+        setError("Respuesta inválida del servidor");
       }
     } catch (err: any) {
-      console.log('Error en login:', err?.response?.data || err);
+      console.log("Error en login:", err?.response?.data || err);
 
       if (err?.response?.status === 419) {
         setError(
@@ -103,12 +103,12 @@ export default function LoginScreen() {
       } else if (err?.response?.status === 401) {
         // Manejar respuesta de credenciales incorrectas del servidor
         const errorMessage =
-          err?.response?.data?.message || 'Credenciales incorrectas';
+          err?.response?.data?.message || "Credenciales incorrectas";
         setError(errorMessage);
       } else if (err?.response?.status === 412) {
-        setError(err?.response?.data?.errors || 'Error de validación');
+        setError(err?.response?.data?.errors || "Error de validación");
       } else {
-        setError('Error de conexión');
+        setError("Error de conexión");
       }
     }
   };
@@ -117,7 +117,7 @@ export default function LoginScreen() {
     <SafeAreaView className="flex-1 bg-black px-6 justify-center">
       <View className="items-center mb-12">
         <Image
-          source={require('../../assets/images/Escudo_Fuerza_Aerea_Ecuador.png')}
+          source={require("@/assets/images/Escudo_Fuerza_Aerea_Ecuador.png")}
           className="w-[150px] h-[150px] mb-4"
           resizeMode="contain"
         />
@@ -134,7 +134,7 @@ export default function LoginScreen() {
           onChangeText={setUsername}
           className="bg-neutral-900 text-white p-4 rounded-md"
         />
-        <View style={{ position: 'relative' }}>
+        <View style={{ position: "relative" }}>
           <TextInput
             placeholder="Password"
             placeholderTextColor="#aaa"
@@ -144,19 +144,20 @@ export default function LoginScreen() {
             className="bg-neutral-900 text-white p-4 rounded-md pr-12"
           />
           <Pressable
-            onPress={() => setShowPassword(prev => !prev)}
+            onPress={() => setShowPassword((prev) => !prev)}
             style={{
-              position: 'absolute',
+              position: "absolute",
               right: 10,
               top: 0,
-              height: '100%',
-              justifyContent: 'center',
+              height: "100%",
+              justifyContent: "center",
             }}
             accessibilityLabel={
-              showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
-            }>
+              showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+            }
+          >
             <Feather
-              name={showPassword ? 'eye-off' : 'eye'}
+              name={showPassword ? "eye-off" : "eye"}
               size={22}
               color="#aaa"
             />
@@ -164,12 +165,13 @@ export default function LoginScreen() {
         </View>
         <TouchableOpacity
           className="bg-neutral-700 p-4 rounded-md items-center mt-2 "
-          onPress={handleLogin}>
+          onPress={handleLogin}
+        >
           <Text className="text-white font-bold">LOG IN</Text>
         </TouchableOpacity>
 
         {error ? (
-          <Text style={{ color: 'red', marginTop: 8 }}>{error}</Text>
+          <Text style={{ color: "red", marginTop: 8 }}>{error}</Text>
         ) : null}
       </View>
 

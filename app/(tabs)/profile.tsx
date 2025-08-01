@@ -3,12 +3,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
-    Alert,
-    Image,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -111,14 +111,9 @@ export default function ProfileScreen() {
         {
           text: 'Cerrar Sesión',
           style: 'destructive',
-          onPress: async () => {
-            try {
-              await AsyncStorage.removeItem('userData');
-              await AsyncStorage.removeItem('userToken');
-              router.replace('/');
-            } catch (error) {
-              console.error('Error during logout:', error);
-            }
+          onPress: () => {
+            console.log('Iniciando logout desde profile...');
+            router.replace('/plugins/logout');
           },
         },
       ]
@@ -172,7 +167,7 @@ export default function ProfileScreen() {
             <View className="flex-row items-center">
               <View className="bg-white/20 p-4 rounded-full mr-4">
                 <Image
-                  source={require('../../assets/images/Escudo_Fuerza_Aerea_Ecuador.png')}
+                  source={require('@/assets/images/Escudo_Fuerza_Aerea_Ecuador.png')}
                   className="w-16 h-16"
                   resizeMode="contain"
                 />

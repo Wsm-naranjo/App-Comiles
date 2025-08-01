@@ -31,13 +31,8 @@ export default function HomeScreen() {
   };
 
   const handleLogout = async () => {
-    try {
-      await AsyncStorage.removeItem("userData");
-      await AsyncStorage.removeItem("userToken");
-      router.replace("/");
-    } catch (error) {
-      console.error("Error during logout:", error);
-    }
+    console.log('Iniciando logout desde home...');
+    router.replace('/plugins/logout');
   };
 
   return (
@@ -47,7 +42,7 @@ export default function HomeScreen() {
         <View className="flex-row justify-between items-center p-6 pb-4">
           <View className="flex-row items-center">
             <Image
-              source={require("../../assets/images/Escudo_Fuerza_Aerea_Ecuador.png")}
+              source={require("@/assets/images/Escudo_Fuerza_Aerea_Ecuador.png")}
               className="w-12 h-12 mr-3"
               resizeMode="contain"
             />
