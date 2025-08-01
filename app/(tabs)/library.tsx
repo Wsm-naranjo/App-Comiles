@@ -200,8 +200,8 @@ export default function LibraryScreen() {
                     router.push({
                       pathname: '/Books/bookPage',
                       params: {
-                        init: '1',
-                        final: '20',
+                        init: libro.pag_inicio,
+                        final: libro.pag_fin,
                         idasignatura: '10',
                         nombreLibro: libro.weblibro,
                       },

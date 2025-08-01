@@ -43,6 +43,8 @@ export interface LibroEstudiante {
   actualizado_at?: string;
   created_at?: string;
   updated_at?: string;
+  pag_inicio?: string;
+  pag_fin?: string;
 }
 
 export interface LibrosResponse {
@@ -55,23 +57,30 @@ export interface LibrosResponse {
  * Servicio para manejar los libros del estudiante
  */
 export class BooksService {
-  
   /**
    * Obtiene el período activo de una institución
    */
-  static async obtenerPeriodoInstitucion(institucionId: number): Promise<PeriodoData | null> {
+  static async obtenerPeriodoInstitucion(
+    institucionId: number
+  ): Promise<PeriodoData | null> {
     try {
       console.log(`Obteniendo período para institución: ${institucionId}`);
-      
-      const response = await api.get(`/institucionTraerPeriodo?institucion_id=${institucionId}`);
-      
-      if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+
+      const response = await api.get(
+        `/institucionTraerPeriodo?institucion_id=${institucionId}`
+      );
+
+      if (
+        response.data &&
+        Array.isArray(response.data) &&
+        response.data.length > 0
+      ) {
         // Tomamos el primer período (asumiendo que es el activo)
         const periodoData = response.data[0] as PeriodoData;
         console.log('Período obtenido:', periodoData);
         return periodoData;
       }
-      
+
       console.log('No se encontró período para la institución');
       return null;
     } catch (error) {
@@ -89,10 +98,14 @@ export class BooksService {
     periodo: number,
     region: number,
     grupo: number
-  ): Promise<{ libros: LibroEstudiante[]; nivel: number; institucion: number }> {
+  ): Promise<{
+    libros: LibroEstudiante[];
+    nivel: number;
+    institucion: number;
+  }> {
     try {
-      const url = `/codigos_libros_estudiante/${id}/${institucion}/${periodo}/${region}/${grupo}`;
-      
+      const url = `/libros_estudiante/${id}/${institucion}/${periodo}/${region}/${grupo}`;
+
       console.log('=== OBTENIENDO LIBROS DEL ESTUDIANTE ===');
       console.log('URL:', url);
       console.log('Parámetros:', {
@@ -100,7 +113,7 @@ export class BooksService {
         institucion,
         periodo,
         region,
-        grupo
+        grupo,
       });
 
       const response = await api.get(url);
@@ -112,13 +125,20 @@ export class BooksService {
 
       // La API devuelve { libros: [...], nivel: ..., institucion: ... }
       if (response.data && typeof response.data === 'object') {
-        const { libros = [], nivel = 0, institucion: inst = institucion } = response.data;
-        
+        const {
+          libros = [],
+          nivel = 0,
+          institucion: inst = institucion,
+        } = response.data;
+
         console.log('=== DATOS PROCESADOS ===');
-        console.log('Cantidad de libros:', Array.isArray(libros) ? libros.length : 0);
+        console.log(
+          'Cantidad de libros:',
+          Array.isArray(libros) ? libros.length : 0
+        );
         console.log('Nivel:', nivel);
         console.log('Institución:', inst);
-        
+
         if (Array.isArray(libros) && libros.length > 0) {
           console.log('Primer libro:', libros[0]);
         }
@@ -126,7 +146,7 @@ export class BooksService {
         return {
           libros: Array.isArray(libros) ? libros : [],
           nivel,
-          institucion: inst
+          institucion: inst,
         };
       }
 
@@ -138,7 +158,7 @@ export class BooksService {
       console.error('Response status:', error?.response?.status);
       console.error('Response data:', error?.response?.data);
       console.error('Message:', error?.message);
-      
+
       return { libros: [], nivel: 0, institucion };
     }
   }
@@ -165,20 +185,20 @@ export class BooksService {
         institucion,
         grupo,
         email: userData.email,
-        rol: userData.grupo?.level
+        rol: userData.grupo?.level,
       });
 
       // Paso 1: Obtener el período de la institución
       console.log('=== PASO 1: OBTENIENDO PERÍODO ===');
       const periodoData = await this.obtenerPeriodoInstitucion(institucion);
-      
+
       if (!periodoData) {
         console.log('❌ No se pudo obtener el período');
         return {
           libros: [],
           periodo: null,
           nivel: 0,
-          error: 'No se pudo obtener el período de la institución'
+          error: 'No se pudo obtener el período de la institución',
         };
       }
 
@@ -197,7 +217,7 @@ export class BooksService {
       console.log('=== RESULTADO FINAL ===');
       console.log('Cantidad de libros:', resultado.libros.length);
       console.log('Nivel:', resultado.nivel);
-      
+
       if (resultado.libros.length === 0) {
         console.log('⚠️ No se encontraron libros para este usuario');
         console.log('Verificar:');
@@ -211,7 +231,6 @@ export class BooksService {
         periodo: periodoData,
         nivel: resultado.nivel,
       };
-
     } catch (error) {
       console.error('=== ERROR GENERAL ===');
       console.error('Error obteniendo libros del usuario:', error);
@@ -219,7 +238,7 @@ export class BooksService {
         libros: [],
         periodo: null,
         nivel: 0,
-        error: 'Error interno al obtener los libros'
+        error: 'Error interno al obtener los libros',
       };
     }
   }
@@ -227,15 +246,17 @@ export class BooksService {
   /**
    * Función de conveniencia para obtener solo la cantidad de libros
    */
-  static async obtenerCantidadLibrosUsuario(userData: UserData): Promise<number> {
+  static async obtenerCantidadLibrosUsuario(
+    userData: UserData
+  ): Promise<number> {
     try {
       const resultado = await this.obtenerLibrosUsuario(userData);
       const cantidad = resultado.libros.length;
-      
+
       console.log('=== CANTIDAD DE LIBROS ===');
       console.log('Usuario:', `${userData.nombres} ${userData.apellidos}`);
       console.log('Cantidad:', cantidad);
-      
+
       return cantidad;
     } catch (error) {
       console.error('Error obteniendo cantidad de libros:', error);
