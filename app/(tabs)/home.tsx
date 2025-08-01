@@ -31,12 +31,15 @@ export default function HomeScreen() {
 
 
   useEffect( () => {
+
     getInstitution()
       .then( ( data ) => setUserInstitution( data ) )
       .catch(err => console.log(err));
   }, [ user ] );
 
-  const getInstitution = async (): Promise<InstitutionResponse> => {
+  const getInstitution = async (): Promise<InstitutionResponse|undefined> => {
+
+
     const institucion = await getUserInstitution( user!.institucion_idInstitucion );
     return institucion;
   };
@@ -46,8 +49,6 @@ export default function HomeScreen() {
 
   const handleLogout = async () => {
     try {
-      // await AsyncStorage.removeItem("userData");
-      // await AsyncStorage.removeItem("userToken");
       useAuthStore.getState().logout();
       router.replace( "/" );
     } catch ( error ) {

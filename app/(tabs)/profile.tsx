@@ -80,6 +80,8 @@ export default function ProfileScreen() {
 
 
 
+
+
   const handleLogout = async () => {
     Alert.alert(
       'Cerrar Sesión',
@@ -174,7 +176,10 @@ export default function ProfileScreen() {
                   { user?.nacionalidad || 'Rango no disponible' }
                 </Text>
                 <Text className="text-blue-200 text-sm">
-                  { `CI. ${user?.cedula}` || 'Cedula no disponible' }
+                  { `CI. ${user?.cedula || 'Cedula no disponible'}`  }
+                </Text>
+                <Text className="text-blue-200 text-sm">
+                  {  user?.grupo.deskripsi || 'N/A' }
                 </Text>
               </View>
             </View>

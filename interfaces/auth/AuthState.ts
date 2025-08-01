@@ -15,10 +15,12 @@ export interface AuthState {
   fecha_change_password:       null;
   fecha_nacimiento:            Date;
   foto_user:                   string;
+  grupo:                       Grupo;
   id_group:                    number;
   idcreadorusuario:            null;
   idusuario:                   number;
   iniciales:                   null;
+  institucion:                 Institucion;
   institucion_idInstitucion:   number;
   institucion_temporal_id:     null;
   modificado_por:              null;
@@ -37,4 +39,21 @@ export interface AuthState {
   telefono:                    string;
   update_datos:                null;
   updated_at:                  Date;
+}
+
+export interface Grupo {
+  busquedaUsuarios: null;
+  created_at:       Date;
+  deskripsi:        string;
+  id:               number;
+  level:            string;
+  permiso_rol:      null;
+  updated_at:       null;
+  user_created:     null;
+  user_edited:      null;
+}
+
+export interface Institucion {
+  idInstitucion:     number;
+  nombreInstitucion: string;
 }

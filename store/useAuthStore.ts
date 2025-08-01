@@ -10,7 +10,7 @@ interface AuthStore {
   user: AuthState | null;
   institution: InstitutionResponse | null;
   setUser: (user: AuthState) => void;
-  setInstitution: (institution: InstitutionResponse) => void;
+  setInstitution: (institution: InstitutionResponse|undefined) => void;
   logout: () => void;
 }
 

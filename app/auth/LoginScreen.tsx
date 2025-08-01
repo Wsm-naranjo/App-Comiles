@@ -1,7 +1,6 @@
 import api, { getCsrfToken } from '@/services/api';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Feather } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import {
@@ -15,25 +14,23 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
-  const [username, setUsername] = useState('balto');
-  const [password, setPassword] = useState('1725024283');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const user = useAuthStore(store=>store.user)
+  const setUser = useAuthStore(store=>store.setUser)
 
   useFocusEffect(
     useCallback(() => {
-      const clearStorege = async () => {
-        // clearStorege
-        // console.log(await AsyncStorage.getAllKeys())
-        // console.log(await AsyncStorage.getItem("userData"))
-      };
-
-      clearStorege()
+      console.log('no hay usuario',user )
+      if(user){
+        router.replace('/(tabs)/home')
+      }
     }, [])
   );
 
-  const setUser = useAuthStore(store=>store.setUser)
 
   const handleLogin = async () => {
     setError('');
@@ -61,20 +58,22 @@ export default function LoginScreen() {
         console.log('2. No se pudo obtener token CSRF, intentando sin él...');
       }
 
+      console.log({username,password})
       // 2. Hacer la solicitud de login
       const response = await api.post('login', {
         name_usuario: username,
         password: password,
       });
 
-      setUser(response.data)
 
       console.log('3. Respuesta del servidor:', response.data);
 
       // Verificar si la respuesta contiene datos del usuario (login exitoso)
       if (response.data && response.data.idusuario) {
         // Guardar los datos del usuario en AsyncStorage
-        await AsyncStorage.setItem('userData', JSON.stringify(response.data));
+        setUser(response.data)
+
+        // await AsyncStorage.setItem('userData', JSON.stringify(response.data));
 
         console.log('Login exitoso!');
         console.log('Usuario:', response.data.nombres, response.data.apellidos);
@@ -86,13 +85,16 @@ export default function LoginScreen() {
       } else if (response.data && response.data.status === 'ok') {
         // Fallback para el formato con status
         if (response.data.token) {
-          await AsyncStorage.setItem('userToken', response.data.token);
+          setUser(response.data)
+          // await AsyncStorage.setItem('userToken', response.data.token);
         }
         if (response.data.datos) {
-          await AsyncStorage.setItem(
-            'userData',
-            JSON.stringify(response.data.datos)
-          );
+          setUser(response.data)
+
+          // await AsyncStorage.setItem(
+          //   'userData',
+          //   JSON.stringify(response.data.datos)
+          // );
         }
         router.replace('/dashboard');
       } else {
