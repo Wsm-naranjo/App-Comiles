@@ -1,7 +1,9 @@
+import { InstitutionResponse } from '@/interfaces/institution/Institutionresponse';
+import { getUserInstitution } from '@/services/user/getUserInstitution';
+import { useAuthStore } from '@/store/useAuthStore';
 import { Feather } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -12,79 +14,96 @@ interface UserData {
 }
 
 export default function HomeScreen() {
-  const [userData, setUserData] = useState<UserData | null>(null);
+  // const [userData, setUserData] = useState<UserData | null>(null);
+
   const router = useRouter();
 
-  useEffect(() => {
-    loadUserData();
-  }, []);
+  // variables globales
+  const user = useAuthStore( ( state ) => state.user );
+  const userInstitution = useAuthStore( ( state ) => state.institution );
+  const setUserInstitution = useAuthStore( ( state ) => state.setInstitution );
 
-  const loadUserData = async () => {
-    try {
-      const data = await AsyncStorage.getItem("userData");
-      if (data) {
-        setUserData(JSON.parse(data));
-      }
-    } catch (error) {
-      console.error("Error loading user data:", error);
-    }
+
+
+
+
+
+
+
+  useEffect( () => {
+    getInstitution()
+      .then( ( data ) => setUserInstitution( data ) )
+      .catch(err => console.log(err));
+  }, [ user ] );
+
+  const getInstitution = async (): Promise<InstitutionResponse> => {
+    const institucion = await getUserInstitution( user!.institucion_idInstitucion );
+    return institucion;
   };
+
+
+
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem("userData");
-      await AsyncStorage.removeItem("userToken");
-      router.replace("/");
-    } catch (error) {
-      console.error("Error during logout:", error);
+      // await AsyncStorage.removeItem("userData");
+      // await AsyncStorage.removeItem("userToken");
+      useAuthStore.getState().logout();
+      router.replace( "/" );
+    } catch ( error ) {
+      console.error( "Error during logout:", error );
     }
   };
 
   return (
     <SafeAreaView className="flex-1 bg-black">
       <ScrollView className="flex-1">
-        {/* Header */}
+        {/* Header */ }
         <View className="flex-row justify-between items-center p-6 pb-4">
           <View className="flex-row items-center">
             <Image
-              source={require("../../assets/images/Escudo_Fuerza_Aerea_Ecuador.png")}
+              source={ require( "../../assets/images/Escudo_Fuerza_Aerea_Ecuador.png" ) }
               className="w-12 h-12 mr-3"
               resizeMode="contain"
             />
             <View>
               <Text className="text-white text-lg font-bold">
-                Bienvenido{userData ? `, ${userData.nombres}` : ""}
-              </Text>
-              <Text className="text-gray-400 text-sm">
-                Fuerzas Armadas del Ecuador
+                Bienvenido{ user ? `, ${ user.nombres }` : "" }
               </Text>
             </View>
           </View>
           <TouchableOpacity
-            onPress={handleLogout}
+            onPress={ handleLogout }
             className="p-2 bg-red-600 rounded-lg"
           >
-            <Feather name="log-out" size={20} color="white" />
+            <Feather name="log-out" size={ 20 } color="white" />
           </TouchableOpacity>
         </View>
 
-        {/* Quick Stats */}
+        {/* Info de la institucion */}
+      <View className='px-6 pb-6'>
+        <Text className="text-white text-2xl">
+                { userInstitution?.nombreInstitucion ? userInstitution.nombreInstitucion : '' }
+        </Text>
+      </View>
+
+        {/* Quick Stats */ }
         <View className="px-6 pb-6">
           <View className="flex-row justify-between">
             <View className="bg-blue-600 p-4 rounded-xl flex-1 mr-2">
-              <Feather name="book-open" size={24} color="white" />
+              <Feather name="book-open" size={ 24 } color="white" />
               <Text className="text-white text-2xl font-bold mt-2">15</Text>
               <Text className="text-blue-200 text-sm">Libros Disponibles</Text>
             </View>
             <View className="bg-green-600 p-4 rounded-xl flex-1 ml-2">
-              <Feather name="bookmark" size={24} color="white" />
+              <Feather name="bookmark" size={ 24 } color="white" />
               <Text className="text-white text-2xl font-bold mt-2">4</Text>
               <Text className="text-green-200 text-sm">Leyendo Ahora</Text>
             </View>
           </View>
         </View>
 
-        {/* Recent Books */}
+        {/* Recent Books */ }
         <View className="px-6">
           <Text className="text-white text-xl font-bold mb-4">
             Continuar Leyendo
@@ -106,7 +125,7 @@ export default function HomeScreen() {
                   <Text className="text-gray-400 text-xs">75%</Text>
                 </View>
               </View>
-              <Feather name="play" size={20} color="#3B82F6" />
+              <Feather name="play" size={ 20 } color="#3B82F6" />
             </View>
           </View>
 
@@ -126,7 +145,7 @@ export default function HomeScreen() {
                   <Text className="text-gray-400 text-xs">100%</Text>
                 </View>
               </View>
-              <Feather name="check-circle" size={20} color="#10B981" />
+              <Feather name="check-circle" size={ 20 } color="#10B981" />
             </View>
           </View>
 
@@ -146,12 +165,12 @@ export default function HomeScreen() {
                   <Text className="text-gray-400 text-xs">45%</Text>
                 </View>
               </View>
-              <Feather name="bookmark" size={20} color="#7C3AED" />
+              <Feather name="bookmark" size={ 20 } color="#7C3AED" />
             </View>
           </View>
         </View>
 
-        {/* Quick Actions */}
+        {/* Quick Actions */ }
         <View className="px-6 mt-4">
           <Text className="text-white text-xl font-bold mb-4">
             Acciones Rápidas
@@ -159,21 +178,21 @@ export default function HomeScreen() {
 
           <View className="flex-row justify-between">
             <TouchableOpacity className="bg-purple-600 p-4 rounded-xl flex-1 mr-2 items-center">
-              <Feather name="search" size={24} color="white" />
+              <Feather name="search" size={ 24 } color="white" />
               <Text className="text-white font-semibold mt-2 text-center">
                 Explorar
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity className="bg-orange-600 p-4 rounded-xl flex-1 mx-1 items-center">
-              <Feather name="bookmark" size={24} color="white" />
+              <Feather name="bookmark" size={ 24 } color="white" />
               <Text className="text-white font-semibold mt-2 text-center">
                 Marcadores
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity className="bg-teal-600 p-4 rounded-xl flex-1 ml-2 items-center">
-              <Feather name="edit-3" size={24} color="white" />
+              <Feather name="edit-3" size={ 24 } color="white" />
               <Text className="text-white font-semibold mt-2 text-center">
                 Mis Notas
               </Text>
@@ -181,7 +200,7 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Reading Stats */}
+        {/* Reading Stats */ }
         <View className="px-6 mt-6">
           <Text className="text-white text-xl font-bold mb-4">
             Estadísticas de Lectura

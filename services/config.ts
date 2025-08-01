@@ -3,7 +3,7 @@ import Constants from "expo-constants";
 // Configuración de URLs
 const config = {
   development: {
-    baseURL: "http://10.10.20.133:8000", // URL local
+    baseURL: "http://10.10.1.204:8000", // URL local
   },
   production: {
     baseURL: "https://mobil.prolipa.com", // Ejemplo de URL

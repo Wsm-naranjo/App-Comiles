@@ -1,4 +1,5 @@
 import api, { getCsrfToken } from '@/services/api';
+import { useAuthStore } from '@/store/useAuthStore';
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -32,6 +33,8 @@ export default function LoginScreen() {
     }, [])
   );
 
+  const setUser = useAuthStore(store=>store.setUser)
+
   const handleLogin = async () => {
     setError('');
 
@@ -63,6 +66,8 @@ export default function LoginScreen() {
         name_usuario: username,
         password: password,
       });
+
+      setUser(response.data)
 
       console.log('3. Respuesta del servidor:', response.data);
 
