@@ -1,4 +1,3 @@
-import LibrosDebug from '@/components/LibrosDebug';
 import useUserBooks from '@/hooks/useUserBooks';
 import { useUserData } from '@/hooks/useUserData';
 import { Feather } from '@expo/vector-icons';
@@ -256,7 +255,7 @@ export default function HomeScreen() {
         </View> */}
 
         {/* Debug Component - Solo para desarrollo */}
-        <LibrosDebug />
+        {/* <LibrosDebug /> */}
       </ScrollView>
     </SafeAreaView>
   );
