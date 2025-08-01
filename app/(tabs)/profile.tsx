@@ -1,136 +1,145 @@
-import { useAuthStore } from '@/store/useAuthStore';
-import { Feather } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useUserBooks } from "@/hooks/useUserBooks";
+import { useUserData } from "@/hooks/useUserData";
+import { Feather } from "@expo/vector-icons";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback } from "react";
 import {
   Alert,
   Image,
   ScrollView,
   Text,
   TouchableOpacity,
-  View
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-interface UserData {
-  nombres: string;
-  apellidos: string;
-  idusuario: string;
-  email?: string;
-  rango?: string;
-  unidad?: string;
-}
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const menuItems = [
   {
     id: 1,
-    title: 'Editar Perfil',
-    icon: 'edit-3',
-    color: 'text-blue-400',
-    action: 'editProfile',
+    title: "Editar Perfil",
+    icon: "edit-3",
+    color: "text-blue-400",
+    action: "editProfile",
   },
   {
     id: 2,
-    title: 'Configuración de Lectura',
-    icon: 'settings',
-    color: 'text-gray-400',
-    action: 'settings',
+    title: "Configuración de Lectura",
+    icon: "settings",
+    color: "text-gray-400",
+    action: "settings",
   },
   {
     id: 3,
-    title: 'Notificaciones',
-    icon: 'bell',
-    color: 'text-yellow-400',
-    action: 'notifications',
+    title: "Notificaciones",
+    icon: "bell",
+    color: "text-yellow-400",
+    action: "notifications",
   },
   {
     id: 4,
-    title: 'Mis Notas y Marcadores',
-    icon: 'bookmark',
-    color: 'text-green-400',
-    action: 'bookmarks',
+    title: "Mis Notas y Marcadores",
+    icon: "bookmark",
+    color: "text-green-400",
+    action: "bookmarks",
   },
   {
     id: 5,
-    title: 'Historial de Lectura',
-    icon: 'clock',
-    color: 'text-purple-400',
-    action: 'history',
+    title: "Historial de Lectura",
+    icon: "clock",
+    color: "text-purple-400",
+    action: "history",
   },
   {
     id: 6,
-    title: 'Ayuda y Soporte',
-    icon: 'help-circle',
-    color: 'text-orange-400',
-    action: 'help',
+    title: "Ayuda y Soporte",
+    icon: "help-circle",
+    color: "text-orange-400",
+    action: "help",
   },
   {
     id: 7,
-    title: 'Acerca de',
-    icon: 'info',
-    color: 'text-gray-400',
-    action: 'about',
+    title: "Acerca de",
+    icon: "info",
+    color: "text-gray-400",
+    action: "about",
   },
 ];
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const {
+    userData,
+    getUserName,
+    getUserEmail,
+    getUserRole,
+    getUserInstitution,
+    getUserPhone,
+  } = useUserData();
+  const { cantidadLibros, isLoading: librosLoading } = useUserBooks();
 
-  const user = useAuthStore( ( state ) => state.user );
-  const userInstitution = useAuthStore( ( state ) => state.institution );
-
-
-
-
+  useFocusEffect(
+    useCallback(() => {
+      console.log("Profile screen focused, checking user data...");
+      if (!userData) {
+        console.log("No hay datos de usuario, redirigiendo al login");
+        router.replace("/");
+      }
+    }, [userData])
+  );
 
   const handleLogout = async () => {
-    Alert.alert(
-      'Cerrar Sesión',
-      '¿Estás seguro de que deseas cerrar sesión?',
-      [
-        {
-          text: 'Cancelar',
-          style: 'cancel',
+    Alert.alert("Cerrar Sesión", "¿Estás seguro de que deseas cerrar sesión?", [
+      {
+        text: "Cancelar",
+        style: "cancel",
+      },
+      {
+        text: "Cerrar Sesión",
+        style: "destructive",
+        onPress: () => {
+          console.log("Iniciando logout desde profile...");
+          router.replace("/plugins/logout");
         },
-        {
-          text: 'Cerrar Sesión',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              useAuthStore.getState().logout();
-              router.replace( '/' );
-            } catch ( error ) {
-              console.error( 'Error during logout:', error );
-            }
-          },
-        },
-      ]
-    );
+      },
+    ]);
   };
 
-  const handleMenuAction = ( action: string ) => {
-    switch ( action ) {
-      case 'editProfile':
-        Alert.alert( 'Editar Perfil', 'Función en desarrollo' );
+  const handleMenuAction = (action: string) => {
+    switch (action) {
+      case "editProfile":
+        Alert.alert("Editar Perfil", "Función en desarrollo");
         break;
-      case 'settings':
-        Alert.alert( 'Configuración de Lectura', 'Ajustes de fuente, brillo, modo nocturno, etc.' );
-        break;
-      case 'notifications':
-        Alert.alert( 'Notificaciones', 'Recordatorios de lectura y nuevos libros' );
-        break;
-      case 'bookmarks':
-        Alert.alert( 'Mis Notas y Marcadores', 'Accede a todas tus notas y marcadores' );
-        break;
-      case 'history':
-        Alert.alert( 'Historial de Lectura', 'Revisa tu historial completo de lectura' );
-        break;
-      case 'help':
-        Alert.alert( 'Ayuda y Soporte', 'Función en desarrollo' );
-        break;
-      case 'about':
+      case "settings":
         Alert.alert(
-          'Acerca de',
-          'Biblioteca Digital Educativa\nFuerzas Armadas del Ecuador\nVersión 1.0.0\n\nPlataforma de libros digitales para la formación militar profesional.'
+          "Configuración de Lectura",
+          "Ajustes de fuente, brillo, modo nocturno, etc."
+        );
+        break;
+      case "notifications":
+        Alert.alert(
+          "Notificaciones",
+          "Recordatorios de lectura y nuevos libros"
+        );
+        break;
+      case "bookmarks":
+        Alert.alert(
+          "Mis Notas y Marcadores",
+          "Accede a todas tus notas y marcadores"
+        );
+        break;
+      case "history":
+        Alert.alert(
+          "Historial de Lectura",
+          "Revisa tu historial completo de lectura"
+        );
+        break;
+      case "help":
+        Alert.alert("Ayuda y Soporte", "Función en desarrollo");
+        break;
+      case "about":
+        Alert.alert(
+          "Acerca de",
+          "Biblioteca Digital Educativa\nFuerzas Armadas del Ecuador\nVersión 1.0.0\n\nPlataforma de libros digitales para la formación militar profesional."
         );
         break;
       default:
@@ -141,70 +150,61 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView className="flex-1 bg-black">
       <ScrollView className="flex-1">
-        {/* Header */ }
+        {/* Header */}
         <View className="p-6 pb-4">
-          <Text className="text-white text-2xl font-bold">
-            Mi Perfil
-          </Text>
+          <Text className="text-white text-2xl font-bold">Mi Perfil</Text>
         </View>
 
-        {/* institution information */ }
-
-        {/* Info de la institucion */ }
-        <View className='px-6 pb-1'>
-          <Text className="text-white text-3xl text-center ">
-            { userInstitution?.nombreInstitucion ? userInstitution.nombreInstitucion : '' }
-          </Text>
-        </View>
-
-        {/* Profile Card */ }
+        {/* Profile Card */}
         <View className="mx-6 mb-6">
           <View className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 rounded-xl">
             <View className="flex-row items-center">
               <View className="bg-white/20 p-4 rounded-full mr-4">
                 <Image
-                  source={ require( '../../assets/images/Escudo_Fuerza_Aerea_Ecuador.png' ) }
+                  source={require("@/assets/images/Escudo_Fuerza_Aerea_Ecuador.png")}
                   className="w-16 h-16"
                   resizeMode="contain"
                 />
               </View>
               <View className="flex-1">
                 <Text className="text-white text-xl font-bold">
-                  { user ? `${ user.nombres } ${ user.apellidos }` : 'Cargando...' }
+                  {getUserName()}
                 </Text>
                 <Text className="text-blue-200 text-sm mt-1">
-                  { user?.nacionalidad || 'Rango no disponible' }
+                  {getUserRole()}
                 </Text>
                 <Text className="text-blue-200 text-sm">
-                  { `CI. ${user?.cedula || 'Cedula no disponible'}`  }
+                  {getUserInstitution()}
                 </Text>
-                <Text className="text-blue-200 text-sm">
-                  {  user?.grupo.deskripsi || 'N/A' }
+                <Text className="text-blue-200 text-sm mt-2">
+                  ID: {userData?.idusuario || "N/A"}
                 </Text>
               </View>
             </View>
           </View>
         </View>
 
-        {/* Stats */ }
+        {/* Stats */}
         <View className="px-6 mb-6">
           <View className="flex-row justify-between">
             <View className="bg-gray-800 p-4 rounded-xl flex-1 mr-2 items-center">
-              <Feather name="book-open" size={ 24 } color="#3B82F6" />
-              <Text className="text-white text-xl font-bold mt-2">15</Text>
+              <Feather name="book-open" size={24} color="#3B82F6" />
+              <Text className="text-white text-xl font-bold mt-2">
+                {librosLoading ? "..." : cantidadLibros}
+              </Text>
               <Text className="text-gray-400 text-sm text-center">
                 Libros en Biblioteca
               </Text>
             </View>
             <View className="bg-gray-800 p-4 rounded-xl flex-1 mx-1 items-center">
-              <Feather name="check-circle" size={ 24 } color="#10B981" />
+              <Feather name="check-circle" size={24} color="#10B981" />
               <Text className="text-white text-xl font-bold mt-2">8</Text>
               <Text className="text-gray-400 text-sm text-center">
                 Libros Completados
               </Text>
             </View>
             <View className="bg-gray-800 p-4 rounded-xl flex-1 ml-2 items-center">
-              <Feather name="bookmark" size={ 24 } color="#F59E0B" />
+              <Feather name="bookmark" size={24} color="#F59E0B" />
               <Text className="text-white text-xl font-bold mt-2">47</Text>
               <Text className="text-gray-400 text-sm text-center">
                 Marcadores
@@ -213,7 +213,7 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Contact Info */ }
+        {/* Contact Info */}
         <View className="px-6 mb-6">
           <Text className="text-white text-lg font-bold mb-4">
             Información de Contacto
@@ -221,22 +221,23 @@ export default function ProfileScreen() {
 
           <View className="bg-gray-800 p-4 rounded-xl mb-3">
             <View className="flex-row items-center">
-              <Feather name="mail" size={ 20 } color="#6B7280" />
+              <Feather name="mail" size={20} color="#6B7280" />
               <View className="ml-3 flex-1">
                 <Text className="text-gray-400 text-sm">Email</Text>
                 <Text className="text-white font-semibold">
-                  { user?.email || 'No disponible' }
+                  {getUserEmail()}
                 </Text>
               </View>
             </View>
           </View>
+
           <View className="bg-gray-800 p-4 rounded-xl mb-3">
             <View className="flex-row items-center">
-              <Feather name="phone" size={ 20 } color="#6B7280" />
+              <Feather name="phone" size={20} color="#6B7280" />
               <View className="ml-3 flex-1">
-                <Text className="text-gray-400 text-sm">Télefono</Text>
+                <Text className="text-gray-400 text-sm">Teléfono</Text>
                 <Text className="text-white font-semibold">
-                  { user?.telefono || 'No disponible' }
+                  {getUserPhone() || "No disponible"}
                 </Text>
               </View>
             </View>
@@ -244,58 +245,54 @@ export default function ProfileScreen() {
 
           <View className="bg-gray-800 p-4 rounded-xl">
             <View className="flex-row items-center">
-              <Feather name="map-pin" size={ 20 } color="#6B7280" />
+              <Feather name="map-pin" size={20} color="#6B7280" />
               <View className="ml-3 flex-1">
-                <Text className="text-gray-400 text-sm">Dirección</Text>
+                <Text className="text-gray-400 text-sm">Institución</Text>
                 <Text className="text-white font-semibold">
-                  { userInstitution?.direccionInstitucion || 'No disponible' }
+                  {getUserInstitution()}
                 </Text>
               </View>
             </View>
           </View>
         </View>
 
-        {/* Menu Items */ }
+        {/* Menu Items */}
         <View className="px-6 mb-6">
-          <Text className="text-white text-lg font-bold mb-4">
-            Opciones
-          </Text>
+          <Text className="text-white text-lg font-bold mb-4">Opciones</Text>
 
-          { menuItems.map( ( item ) => (
+          {menuItems.map((item) => (
             <TouchableOpacity
-              key={ item.id }
-              onPress={ () => handleMenuAction( item.action ) }
+              key={item.id}
+              onPress={() => handleMenuAction(item.action)}
               className="bg-gray-800 p-4 rounded-xl mb-3"
             >
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center">
                   <Feather
-                    name={ item.icon as any }
-                    size={ 20 }
-                    color={ item.color.replace( 'text-', '#' ) }
-                    className={ item.color }
+                    name={item.icon as any}
+                    size={20}
+                    color={item.color.replace("text-", "#")}
+                    className={item.color}
                   />
                   <Text className="text-white font-semibold ml-3">
-                    { item.title }
+                    {item.title}
                   </Text>
                 </View>
-                <Feather name="chevron-right" size={ 20 } color="#6B7280" />
+                <Feather name="chevron-right" size={20} color="#6B7280" />
               </View>
             </TouchableOpacity>
-          ) ) }
+          ))}
         </View>
 
-        {/* Logout Button */ }
+        {/* Logout Button */}
         <View className="px-6 pb-6">
           <TouchableOpacity
-            onPress={ handleLogout }
+            onPress={handleLogout}
             className="bg-red-600 p-4 rounded-xl"
           >
             <View className="flex-row items-center justify-center">
-              <Feather name="log-out" size={ 20 } color="white" />
-              <Text className="text-white font-bold ml-2">
-                Cerrar Sesión
-              </Text>
+              <Feather name="log-out" size={20} color="white" />
+              <Text className="text-white font-bold ml-2">Cerrar Sesión</Text>
             </View>
           </TouchableOpacity>
         </View>

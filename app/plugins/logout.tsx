@@ -1,3 +1,4 @@
+import { useUserData } from "@/hooks/useUserData";
 import api, { clearCsrfToken } from "@/services/api";
 import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -9,6 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function LogoutScreen() {
   const router = useRouter();
   const [loadingText, setLoadingText] = useState("Cerrando sesión...");
+  const { clearUserData } = useUserData();
 
   useEffect(() => {
     console.log("Logout screen iniciado");
@@ -26,7 +28,10 @@ export default function LogoutScreen() {
         const response = await api.post("/logout");
         console.log("Logout exitoso en el servidor:", response.status);
       } catch (serverError: any) {
-        console.log("Error en logout del servidor:", serverError?.response?.status || serverError?.message);
+        console.log(
+          "Error en logout del servidor:",
+          serverError?.response?.status || serverError?.message
+        );
         console.log("Continuando con logout local...");
         // Continuar con el logout local aunque falle el servidor
       }
@@ -37,10 +42,13 @@ export default function LogoutScreen() {
 
       // Verificar qué datos hay antes de limpiar
       const userDataBefore = await AsyncStorage.getItem("userData");
-      console.log("Datos antes de limpiar:", userDataBefore ? "EXISTEN" : "NO EXISTEN");
+      console.log(
+        "Datos antes de limpiar:",
+        userDataBefore ? "EXISTEN" : "NO EXISTEN"
+      );
 
-      // Limpiar AsyncStorage completamente
-      await AsyncStorage.removeItem("userData");
+      // Limpiar datos del usuario usando el contexto
+      await clearUserData();
       await AsyncStorage.removeItem("userToken");
       await AsyncStorage.removeItem("csrfToken");
       console.log("Items específicos eliminados");
@@ -51,7 +59,10 @@ export default function LogoutScreen() {
 
       // Verificar que realmente se limpiaron
       const userDataAfter = await AsyncStorage.getItem("userData");
-      console.log("Datos después de limpiar:", userDataAfter ? "AÚN EXISTEN!" : "LIMPIADO CORRECTAMENTE");
+      console.log(
+        "Datos después de limpiar:",
+        userDataAfter ? "AÚN EXISTEN!" : "LIMPIADO CORRECTAMENTE"
+      );
 
       // Limpiar token CSRF de la memoria
       clearCsrfToken();
@@ -66,6 +77,7 @@ export default function LogoutScreen() {
       console.error("Error crítico en logout:", error);
       // Limpiar datos locales como fallback
       try {
+        await clearUserData();
         await AsyncStorage.clear();
         clearCsrfToken();
       } catch (cleanupError) {

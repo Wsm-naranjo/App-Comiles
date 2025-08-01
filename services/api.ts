@@ -25,23 +25,29 @@ export const clearCsrfToken = (): void => {
 export const resetSession = async (): Promise<void> => {
   console.log("Iniciando reset completo de sesión...");
   
-  // Limpiar token CSRF
-  clearCsrfToken();
-  
-  // Limpiar AsyncStorage
-  try {
-    await AsyncStorage.clear();
-    console.log("AsyncStorage completamente limpiado");
-  } catch (error) {
-    console.error("Error limpiando AsyncStorage:", error);
-  }
-  
-  // Intentar hacer logout en el servidor
+  // 1. Intentar hacer logout en el servidor primero (antes de limpiar tokens)
   try {
     await api.post("/logout");
     console.log("Logout en servidor exitoso");
+  } catch (error: any) {
+    if (error?.response?.status === 419) {
+      console.log("Token CSRF expirado (normal)");
+    } else if (error?.response?.status === 401) {
+      console.log("No hay sesión activa en servidor");
+    } else {
+      console.log("Error en logout del servidor:", error?.response?.status || error?.message);
+    }
+  }
+  
+  // 2. Limpiar token CSRF
+  clearCsrfToken();
+  
+  // 3. Limpiar AsyncStorage
+  try {
+    await AsyncStorage.clear();
+    console.log("AsyncStorage limpiado");
   } catch (error) {
-    console.log("Error en logout del servidor (ignorado):", error);
+    console.error("Error limpiando AsyncStorage:", error);
   }
   
   console.log("Reset de sesión completo");
@@ -74,6 +80,8 @@ export const getCsrfToken = async (forceRefresh: boolean = false): Promise<strin
           if (tokenMatch) {
             csrfToken = decodeURIComponent(tokenMatch[1]);
             console.log("Token CSRF obtenido:", csrfToken);
+            // Pequeña pausa para asegurar que el token esté listo
+            await new Promise(resolve => setTimeout(resolve, 100));
             return csrfToken;
           }
         }

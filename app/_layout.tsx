@@ -1,17 +1,20 @@
 import { Stack } from "expo-router";
 import '../global.css';
+import { UserProvider } from '../services/UserContext';
 
 export default function RootLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="auth/LoginScreen" />
-      <Stack.Screen name="plugins/loading" />
-      <Stack.Screen name="plugins/logout" />
+    <UserProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="auth/LoginScreen" />
+        <Stack.Screen name="plugins/loading" />
+        <Stack.Screen name="plugins/logout" />
 
-      <Stack.Screen name="dashboard" />
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-    </Stack>
+        <Stack.Screen name="dashboard" />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack>
+    </UserProvider>
   );
 }
 

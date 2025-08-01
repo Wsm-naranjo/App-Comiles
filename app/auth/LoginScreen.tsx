@@ -1,9 +1,11 @@
-import api, { getCsrfToken, resetSession } from '@/services/api';
-import { useAuthStore } from '@/store/useAuthStore';
-import { Feather } from '@expo/vector-icons';
-import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
+import api, { getCsrfToken, resetSession } from "@/services/api";
+import { useUser } from "@/services/UserContext";
+import { Feather } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+import { useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   Pressable,
   Text,
@@ -14,42 +16,47 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const user = useAuthStore(store=>store.user)
-  const setUser = useAuthStore(store=>store.setUser)
-
-  useFocusEffect(
-    useCallback(() => {
-      console.log('no hay usuario',user )
-      if(user){
-        router.replace('/(tabs)/home')
-      }
-    }, [])
-  );
-
+  const { setUserData } = useUser();
 
   const handleLogin = async () => {
+    // Prevenir múltiples clics
+    if (isLoading) return;
+
     setError("");
-
-    // Validar que los campos no estén vacíos
-    if (!username.trim()) {
-      setError("Por favor ingresa tu nombre de usuario");
-      return;
-    }
-
-    if (!password.trim()) {
-      setError("Por favor ingresa tu contraseña");
-      return;
-    }
+    setIsLoading(true);
 
     try {
-      console.log("0. Reseteando sesión completamente...");
-      await resetSession();
+      // Validar que los campos no estén vacíos
+      if (!username.trim()) {
+        setError("Por favor ingresa tu nombre de usuario");
+        setIsLoading(false);
+        return;
+      }
 
+      if (!password.trim()) {
+        setError("Por favor ingresa tu contraseña");
+        setIsLoading(false);
+        return;
+      }
+
+      // PRIMERO: Reset completo de sesión ANTES del try-catch
+      console.log("0. Reseteando sesión completamente...");
+      try {
+        await resetSession();
+        console.log("Reset de sesión exitoso");
+        // Delay mínimo
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      } catch (resetError) {
+        console.log("Error en reset (continuando):", resetError);
+      }
+
+      // Proceso principal de login
       console.log("1. Obteniendo token CSRF...");
 
       // 1. Obtener un token CSRF fresco
@@ -61,7 +68,6 @@ export default function LoginScreen() {
         console.log("2. No se pudo obtener token CSRF, intentando sin él...");
       }
 
-      console.log({username,password})
       // 2. Hacer la solicitud de login
       console.log("2. Enviando credenciales:", {
         name_usuario: username,
@@ -73,15 +79,41 @@ export default function LoginScreen() {
         password: password,
       });
 
+      console.log("3. Respuesta del servidor:", response.data);
 
-      console.log('3. Respuesta del servidor:', response.data);
+      // Verificar si la respuesta está vacía o es inválida
+      if (!response.data || Object.keys(response.data).length === 0) {
+        console.log(
+          "Respuesta vacía del servidor - esperando y reintentando..."
+        );
+
+        // Esperar un poco y reintentar una vez
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        console.log("Reintentando login...");
+        const retryResponse = await api.post("login", {
+          name_usuario: username,
+          password: password,
+        });
+
+        console.log("Respuesta del reintento:", retryResponse.data);
+
+        if (
+          !retryResponse.data ||
+          Object.keys(retryResponse.data).length === 0
+        ) {
+          setError("Error del servidor. Por favor intenta más tarde.");
+          return;
+        }
+
+        // Usar la respuesta del reintento
+        response.data = retryResponse.data;
+      }
 
       // Verificar si la respuesta contiene datos del usuario (login exitoso)
       if (response.data && response.data.idusuario) {
-        // Guardar los datos del usuario en AsyncStorage
-        setUser(response.data)
-
-        // await AsyncStorage.setItem('userData', JSON.stringify(response.data));
+        // Guardar los datos del usuario usando el contexto
+        await setUserData(response.data);
 
         console.log("Login exitoso!");
         console.log("Usuario:", response.data.nombres, response.data.apellidos);
@@ -93,16 +125,10 @@ export default function LoginScreen() {
       } else if (response.data && response.data.status === "ok") {
         // Fallback para el formato con status
         if (response.data.token) {
-          setUser(response.data)
-          // await AsyncStorage.setItem('userToken', response.data.token);
+          await AsyncStorage.setItem("userToken", response.data.token);
         }
         if (response.data.datos) {
-          setUser(response.data)
-
-          // await AsyncStorage.setItem(
-          //   'userData',
-          //   JSON.stringify(response.data.datos)
-          // );
+          await setUserData(response.data.datos);
         }
         router.replace("/plugins/loading");
       } else {
@@ -125,6 +151,8 @@ export default function LoginScreen() {
       } else {
         setError("Error de conexión");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -179,10 +207,24 @@ export default function LoginScreen() {
           </Pressable>
         </View>
         <TouchableOpacity
-          className="bg-neutral-700 p-4 rounded-md items-center mt-2 "
+          className={`p-4 rounded-md items-center mt-2 ${
+            isLoading ? "bg-neutral-600" : "bg-neutral-700"
+          }`}
           onPress={handleLogin}
+          disabled={isLoading}
         >
-          <Text className="text-white font-bold">LOG IN</Text>
+          <View className="flex-row items-center">
+            {isLoading && (
+              <ActivityIndicator
+                size="small"
+                color="white"
+                style={{ marginRight: 8 }}
+              />
+            )}
+            <Text className="text-white font-bold">
+              {isLoading ? "INICIANDO SESIÓN..." : "LOG IN"}
+            </Text>
+          </View>
         </TouchableOpacity>
 
         {error ? (
