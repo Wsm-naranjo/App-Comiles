@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, useColorScheme, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 
 interface Params {
@@ -15,28 +16,41 @@ export default function Book({
   idasignatura,
   nombreLibro,
 }: Params) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+
   return (
-    <View style={styles.container}>
-      <WebView
-        source={{
-          uri: `https://data.prolipadigital.com.ec/archivos/upload/libro/${nombreLibro}/?init=${init}&final=${final}&idasignatura=${idasignatura}`,
-        }}
-        style={styles.webview}
-        originWhitelist={['*']}
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-        startInLoadingState={true}
-      />
-    </View>
+    <>
+      <SafeAreaView
+        style={[
+          styles.container,
+          { backgroundColor: isDark ? 'black' : 'white' },
+        ]}>
+        <View
+          style={[
+            styles.container,
+            { backgroundColor: isDark ? 'black' : 'white' },
+          ]}>
+          <WebView
+            source={{
+              uri: `https://data.prolipadigital.com.ec/archivos/upload/libro/${nombreLibro}/?init=${init}&final=${final}&idasignatura=${idasignatura}`,
+            }}
+            style={styles.webview}
+            originWhitelist={['*']}
+            javaScriptEnabled
+            domStorageEnabled
+            startInLoadingState
+          />
+        </View>
+      </SafeAreaView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
     width: '100%',
-    height: 500,
   },
   webview: {
     flex: 1,

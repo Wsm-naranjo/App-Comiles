@@ -4,6 +4,7 @@ import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
+  Image,
   ScrollView,
   Text,
   TextInput,
@@ -208,7 +209,13 @@ export default function LibraryScreen() {
                   }}>
                   <View className="items-center mb-3">
                     <View className="w-20 h-28 bg-gray-700 rounded-lg mb-2 items-center justify-center">
-                      {/* <Feather name="phone" size={24} color="#6B7280" /> */}
+                      <Image
+                        source={{
+                          uri: `https://data.prolipadigital.com.ec/archivos/upload/libro/${libro.weblibro}/${libro.portada}`,
+                        }}
+                        style={{ width: "100%", height: "100%", borderRadius: 5 }}
+                        resizeMode="cover"
+                      />
                     </View>
                     <View className="absolute top-0 right-0">
                       <Feather name="book-open" size={16} color="#3B82F6" />
