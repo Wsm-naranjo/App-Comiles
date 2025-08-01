@@ -152,7 +152,7 @@ export default function ProfileScreen() {
 
         {/* Info de la institucion */ }
         <View className='px-6 pb-1'>
-          <Text className="text-white text-3xl ">
+          <Text className="text-white text-3xl text-center ">
             { userInstitution?.nombreInstitucion ? userInstitution.nombreInstitucion : '' }
           </Text>
         </View>

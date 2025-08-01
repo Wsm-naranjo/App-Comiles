@@ -50,7 +50,7 @@ export default function HomeScreen() {
   const handleLogout = async () => {
     try {
       useAuthStore.getState().logout();
-      router.replace( "/" );
+      router.replace( "/plugins/logout" );
     } catch ( error ) {
       console.error( "Error during logout:", error );
     }
@@ -83,7 +83,7 @@ export default function HomeScreen() {
 
         {/* Info de la institucion */}
       <View className='px-6 pb-6'>
-        <Text className="text-white text-2xl">
+        <Text className="text-white text-2xl text-center">
                 { userInstitution?.nombreInstitucion ? userInstitution.nombreInstitucion : '' }
         </Text>
       </View>
