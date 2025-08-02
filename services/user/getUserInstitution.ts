@@ -5,6 +5,6 @@ export const getUserInstitution = async (institutionId:number|null): Promise<Ins
 
   if(!institutionId) return
 
-  const res = await api.get(`institucion/${institutionId}`)
+  const res = await api.get(`/api/institucion/${institutionId}`)
   return res.data
 }

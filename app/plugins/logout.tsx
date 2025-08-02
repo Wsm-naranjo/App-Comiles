@@ -25,7 +25,7 @@ export default function LogoutScreen() {
 
       try {
         console.log("Enviando petición POST /logout al servidor...");
-        const response = await api.post("/logout");
+        const response = await api.post("/api/mobile/logout");
         console.log("Logout exitoso en el servidor:", response.status);
       } catch (serverError: any) {
         console.log(

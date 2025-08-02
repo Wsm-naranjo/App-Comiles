@@ -1,4 +1,4 @@
-import api, { getCsrfToken, resetSession } from "@/services/api";
+import api, { /* getCsrfToken, */ resetSession } from "@/services/api";
 import { useUser } from "@/services/UserContext";
 import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -57,8 +57,9 @@ export default function LoginScreen() {
       }
 
       // Proceso principal de login
-      console.log("1. Obteniendo token CSRF...");
-
+      console.log("1. Iniciando proceso de login con la nueva API...");
+      
+      /* Ya no es necesario obtener token CSRF para la nueva API
       // 1. Obtener un token CSRF fresco
       const token = await getCsrfToken(true);
 
@@ -67,6 +68,7 @@ export default function LoginScreen() {
       } else {
         console.log("2. No se pudo obtener token CSRF, intentando sin él...");
       }
+      */
 
       // 2. Hacer la solicitud de login
       console.log("2. Enviando credenciales:", {
@@ -74,7 +76,7 @@ export default function LoginScreen() {
         password: password ? "[OCULTA]" : "[VACÍA]",
       });
 
-      const response = await api.post("login", {
+      const response = await api.post("/api/mobile/login", {
         name_usuario: username,
         password: password,
       });
@@ -91,7 +93,7 @@ export default function LoginScreen() {
         await new Promise((resolve) => setTimeout(resolve, 500));
 
         console.log("Reintentando login...");
-        const retryResponse = await api.post("login", {
+        const retryResponse = await api.post("/api/mobile/login", {
           name_usuario: username,
           password: password,
         });
@@ -110,8 +112,25 @@ export default function LoginScreen() {
         response.data = retryResponse.data;
       }
 
-      // Verificar si la respuesta contiene datos del usuario (login exitoso)
-      if (response.data && response.data.idusuario) {
+      // Verificar si la respuesta contiene el nuevo formato con token JWT
+      if (response.data && response.data.token && response.data.user) {
+        console.log("Formato nuevo detectado con token JWT");
+        
+        // Guardar el token JWT en AsyncStorage
+        await AsyncStorage.setItem("userToken", response.data.token);
+        console.log("Token JWT guardado:", response.data.token);
+        
+        // Guardar los datos del usuario usando el contexto
+        await setUserData(response.data.user);
+        
+        console.log("Login exitoso!");
+        console.log("Navegando al loading screen...");
+        
+        // Navegar al loading screen
+        router.replace("/plugins/loading");
+      }
+      // Verificar si la respuesta contiene datos del usuario en formato antiguo (login exitoso)
+      else if (response.data && response.data.idusuario) {
         // Guardar los datos del usuario usando el contexto
         await setUserData(response.data);
 
@@ -126,9 +145,13 @@ export default function LoginScreen() {
         // Fallback para el formato con status
         if (response.data.token) {
           await AsyncStorage.setItem("userToken", response.data.token);
+          console.log("Token JWT guardado (formato status):", response.data.token);
         }
         if (response.data.datos) {
           await setUserData(response.data.datos);
+        } else if (response.data.user) {
+          // Formato alternativo que podría venir con user en lugar de datos
+          await setUserData(response.data.user);
         }
         router.replace("/plugins/loading");
       } else {
@@ -137,11 +160,13 @@ export default function LoginScreen() {
     } catch (err: any) {
       console.log("Error en login:", err?.response?.data || err);
 
+      /* Ya no es necesario manejar errores de CSRF
       if (err?.response?.status === 419) {
         setError(
           "Error de token CSRF. Configura el servidor para excluir 'login' del middleware CSRF."
         );
-      } else if (err?.response?.status === 401) {
+      } else */ 
+      if (err?.response?.status === 401) {
         // Manejar respuesta de credenciales incorrectas del servidor
         const errorMessage =
           err?.response?.data?.message || "Credenciales incorrectas";

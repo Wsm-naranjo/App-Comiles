@@ -67,7 +67,7 @@ export class BooksService {
       console.log(`Obteniendo período para institución: ${institucionId}`);
 
       const response = await api.get(
-        `/institucionTraerPeriodo?institucion_id=${institucionId}`
+        `/api/institucionTraerPeriodo?institucion_id=${institucionId}`
       );
 
       if (
@@ -104,7 +104,7 @@ export class BooksService {
     institucion: number;
   }> {
     try {
-      const url = `/libros_estudiante/${id}/${institucion}/${periodo}/${region}/${grupo}`;
+      const url = `/api/libros_estudiante/${id}/${institucion}/${periodo}/${region}/${grupo}`;
 
       console.log('=== OBTENIENDO LIBROS DEL ESTUDIANTE ===');
       console.log('URL:', url);

@@ -26,7 +26,7 @@ export class SeriesService {
     try {
       console.log('=== OBTENIENDO SERIES ===');
       
-      const response = await api.get('/series');
+      const response = await api.get('/api/series');
       
       console.log('Respuesta de series:', {
         status: response.status,
