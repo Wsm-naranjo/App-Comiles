@@ -1,6 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { API_CONFIG } from "./config";
+import { API_CONFIG, getCurrentEnvironment } from "./config";
+
+// Mostrar información del entorno al cargar
+const envInfo = getCurrentEnvironment();
+console.log("🌍 CONFIGURACIÓN DE ENTORNO:");
+console.log(`   Entorno: ${envInfo.environment.toUpperCase()}`);
+console.log(`   Base URL: ${envInfo.baseURL}`);
+console.log(`   Es Producción: ${envInfo.isProduction}`);
+console.log(`   Debug Info:`, envInfo.debug);
 
 // Crear instancia de axios con la configuración actual
 const api = axios.create({

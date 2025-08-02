@@ -1,3 +1,6 @@
+import { EnvironmentDebug } from "@/components/EnvironmentDebug";
+import { TapIndicator } from "@/components/TapIndicator";
+import { useDebugTap } from "@/hooks/useDebugTap";
 import api, { /* getCsrfToken, */ resetSession } from "@/services/api";
 import { useUser } from "@/services/UserContext";
 import { Feather } from "@expo/vector-icons";
@@ -23,6 +26,7 @@ export default function LoginScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { setUserData } = useUser();
+  const { tapCount, isDebugVisible, handleTap, hideDebug } = useDebugTap(3, 2000);
 
   const handleLogin = async () => {
     // Prevenir múltiples clics
@@ -195,12 +199,19 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-black px-6 justify-center">
+      <EnvironmentDebug 
+        visible={isDebugVisible} 
+        onClose={hideDebug} 
+      />
       <View className="items-center mb-12">
-        <Image
-          source={require("@/assets/images/Escudo_Fuerza_Aerea_Ecuador.png")}
-          className="w-[150px] h-[150px] mb-4"
-          resizeMode="contain"
-        />
+        <TouchableOpacity onPress={handleTap} activeOpacity={0.8}>
+          <Image
+            source={require("@/assets/images/Escudo_Fuerza_Aerea_Ecuador.png")}
+            className="w-[150px] h-[150px] mb-4"
+            resizeMode="contain"
+          />
+          <TapIndicator tapCount={tapCount} maxTaps={3} />
+        </TouchableOpacity>
         <Text className="text-3xl font-bold text-white text-center">
           Fuerzas Armadas del Ecuador
         </Text>

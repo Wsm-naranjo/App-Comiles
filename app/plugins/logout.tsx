@@ -1,5 +1,5 @@
 import { useUserData } from "@/hooks/useUserData";
-import { clearCsrfToken, logoutFromServer } from "@/services/api";
+import { clearCsrfToken, clearToken, logoutFromServer } from "@/services/api";
 import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";

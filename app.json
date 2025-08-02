@@ -43,7 +43,8 @@
       "router": {},
       "eas": {
         "projectId": "815341d1-54c2-45b4-b4c8-4990570f9524"
-      }
+      },
+      "environment": "development"
     }
   }
 }

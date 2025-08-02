@@ -4,11 +4,20 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
+    "start:dev": "APP_ENV=development expo start",
+    "start:prod": "APP_ENV=production expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "check-env": "node scripts/check-environment.js",
+    "build:dev": "APP_ENV=development eas build --profile development",
+    "build:preview": "APP_ENV=production eas build --profile preview",
+    "build:prod": "APP_ENV=production eas build --profile production",
+    "build:android:dev": "APP_ENV=development eas build --platform android --profile development",
+    "build:android:preview": "APP_ENV=production eas build --platform android --profile preview",
+    "build:android:prod": "APP_ENV=production eas build --platform android --profile production"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
