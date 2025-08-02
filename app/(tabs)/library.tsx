@@ -144,9 +144,7 @@ export default function LibraryScreen() {
               {seriesOptions.map(serie => (
                 <TouchableOpacity
                   key={serie}
-                  // onPress={() => setSelectedSerie(serie)}
-                  // onPress={() => router.push('/book')}
-                  // onPress={() => console.log("XD")}
+                  onPress={() => setSelectedSerie(serie)}
                   className={`mr-3 px-4 py-2 rounded-full ${
                     selectedSerie === serie ? 'bg-blue-600' : 'bg-gray-800'
                   }`}>
@@ -196,13 +194,12 @@ export default function LibraryScreen() {
                   key={libro.idlibro}
                   className="w-[48%] bg-gray-800 p-4 rounded-xl mb-4"
                   onPress={() => {
-                    // "/Books/bookPage"
                     router.push({
                       pathname: '/Books/bookPage',
                       params: {
                         init: libro.pag_inicio,
                         final: libro.pag_fin,
-                        idasignatura: '10',
+                        idasignatura: libro.asignatura_idasignatura,
                         nombreLibro: libro.weblibro,
                       },
                     });
@@ -211,7 +208,9 @@ export default function LibraryScreen() {
                     <View className="w-20 h-28 bg-gray-700 rounded-lg mb-2 items-center justify-center">
                       <Image
                         source={{
-                          uri: `https://data.prolipadigital.com.ec/archivos/upload/libro/${libro.weblibro}/${libro.portada}`,
+                          uri: libro.portada
+                            ? `https://data.prolipadigital.com.ec/archivos/upload/libro/${libro.weblibro}/${libro.portada}`
+                            : 'https://via.placeholder.com/80x120',
                         }}
                         style={{ width: "100%", height: "100%", borderRadius: 5 }}
                         resizeMode="cover"
@@ -233,18 +232,6 @@ export default function LibraryScreen() {
                     {libro.nombreasignatura}
                   </Text>
 
-                  {/* <View className="mb-2">
-                    <View className="bg-gray-700 rounded-full h-1.5">
-                      <View
-                        className="bg-blue-500 h-1.5 rounded-full"
-                        style={{ width: `${Math.random() * 100}%` }}
-                      />
-                    </View>
-                    <Text className="text-gray-400 text-xs mt-1 text-center">
-                      {Math.floor(Math.random() * 100)}%
-                    </Text>
-                  </View> */}
-
                   <View className="flex-row items-center justify-between">
                     <View
                       className={`px-2 py-1 rounded-full ${getSerieBgColor(libro.serie || 'default')}`}>
@@ -264,11 +251,27 @@ export default function LibraryScreen() {
                   key={libro.idlibro}
                   className="bg-gray-800 p-4 rounded-xl mb-4"
                   onPress={() => {
-                    // console.log('Abrir libro:', libro.nombrelibro);
+                    router.push({
+                      pathname: '/Books/bookPage',
+                      params: {
+                        init: libro.pag_inicio,
+                        final: libro.pag_fin,
+                        idasignatura: libro.asignatura_idasignatura,
+                        nombreLibro: libro.weblibro,
+                      },
+                    });
                   }}>
                   <View className="flex-row">
                     <View className="w-16 h-22 bg-gray-700 rounded-lg mr-4 items-center justify-center">
-                      <Feather name="book" size={20} color="#6B7280" />
+                      <Image
+                        source={{
+                          uri: libro.portada
+                            ? `https://data.prolipadigital.com.ec/archivos/upload/libro/${libro.weblibro}/${libro.portada}`
+                            : 'https://via.placeholder.com/64x88',
+                        }}
+                        style={{ width: "100%", height: "100%", borderRadius: 5 }}
+                        resizeMode="cover"
+                      />
                     </View>
 
                     <View className="flex-1">
@@ -284,6 +287,18 @@ export default function LibraryScreen() {
                       <Text className="text-gray-400 text-sm mb-1">
                         {libro.nombreasignatura}
                       </Text>
+
+                      {/* <View className="mb-2">
+                        <View className="bg-gray-700 rounded-full h-1.5">
+                          <View
+                            className="bg-blue-500 h-1.5 rounded-full"
+                            style={{ width: `${Math.random() * 100}%` }}
+                          />
+                        </View>
+                        <Text className="text-gray-400 text-xs mt-1 text-center">
+                          {Math.floor(Math.random() * 100)}%
+                        </Text>
+                      </View> */}
 
                       <View className="flex-row items-center mb-2">
                         <View

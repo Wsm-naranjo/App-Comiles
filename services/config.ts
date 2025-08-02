@@ -6,7 +6,7 @@ const config = {
     baseURL: "http://10.10.1.220:8000", // URL local
   },
   production: {
-    baseURL: "https://mobil.prolipa.com", // Ejemplo de URL
+    baseURL: "https://server1.prolipadigital.com.ec/", // Ejemplo de URL
   },
 };
 
