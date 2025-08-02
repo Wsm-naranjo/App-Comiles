@@ -6,7 +6,7 @@ const config = {
     baseURL: "http://10.10.1.220:8000", // URL local
   },
   production: {
-    baseURL: "https://server1.prolipadigital.com.ec/", // Ejemplo de URL
+    baseURL: "https://server1.prolipadigital.com.ec", 
   },
 };
 
@@ -33,7 +33,7 @@ export const USER_CONFIG = {
     PHOTO: 'default.png',
     INSTITUTION: 'Institución',
     ROLE: 'Usuario',
-    EMAIL_DOMAIN: '@fuerzasarmadas.mil.ec',
+    EMAIL_DOMAIN: '@prolipadigital.com.ec',
   },
 };
 
