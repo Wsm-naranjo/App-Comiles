@@ -43,9 +43,29 @@ export default function LoadingScreen() {
         console.log('ID Usuario:', parsedData.idusuario);
         console.log('Username:', parsedData.name_usuario);
         console.log('Email:', parsedData.email);
+        console.log('ID Institución:', parsedData.institucion_idInstitucion);
         console.log('================================');
-        console.log('Navegando a home...');
-        router.replace('/(tabs)/home');
+        
+        // Validar tipo de institución
+        setLoadingText('Verificando permisos de institución...');
+        try {
+          // Importar dinámicamente para evitar problemas de ciclo de dependencias
+          const { validateInstitutionType } = await import('@/services/user/validateInstitutionType');
+          console.log('Validando tipo de institución', parsedData.institucion_idInstitucion);
+          const isValidInstitution = await validateInstitutionType(parsedData.institucion_idInstitucion);
+          console.log('Validación de tipo de institución', isValidInstitution);
+          if (isValidInstitution) {
+            console.log('Institución validada correctamente');
+            console.log('Navegando a home...');
+            router.replace('/(tabs)/home');
+          } else {
+            console.log('Institución no autorizada');
+            router.replace('/auth/AccessDenied');
+          }
+        } catch (validationError) {
+          console.error('Error validando institución:', validationError);
+          router.replace('/(tabs)/home'); // Fallback a home en caso de error de validación
+        }
       } else {
         console.log('No hay datos, regresando al login...');
         router.replace('/');
