@@ -22,26 +22,62 @@ export const clearCsrfToken = (): void => {
   // csrfToken = null;
 };
 
+// Función para obtener el token JWT actual
+export const getCurrentToken = async (): Promise<string | null> => {
+  try {
+    return await AsyncStorage.getItem("userToken");
+  } catch (error) {
+    console.log("Error obteniendo token:", error);
+    return null;
+  }
+};
+
+// Función para limpiar el token JWT
+export const clearToken = async (): Promise<void> => {
+  try {
+    await AsyncStorage.removeItem("userToken");
+    console.log("Token JWT eliminado");
+  } catch (error) {
+    console.error("Error eliminando token:", error);
+  }
+};
+
+// Función para hacer logout en el servidor con token
+export const logoutFromServer = async (): Promise<boolean> => {
+  try {
+    console.log("Enviando logout al servidor con token...");
+    const token = await AsyncStorage.getItem("userToken");
+    
+    if (!token) {
+      console.log("No hay token para logout");
+      return false;
+    }
+
+    // Hacer logout en el servidor con el token
+    await api.post("/api/mobile/logout", {}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    
+    console.log("Logout en servidor exitoso");
+    return true;
+  } catch (error: any) {
+    if (error?.response?.status === 401) {
+      console.log("Token ya expirado o inválido");
+    } else {
+      console.log("Error en logout del servidor:", error?.response?.status || error?.message);
+    }
+    return false;
+  }
+};
+
 // Función para reset completo de la sesión
 export const resetSession = async (): Promise<void> => {
   console.log("Iniciando reset completo de sesión...");
   
   // 1. Intentar hacer logout en el servidor primero (antes de limpiar tokens)
-  try {
-    // Para el login móvil, usamos la ruta de logout de Sanctum
-    await api.post("/api/mobile/logout");
-    console.log("Logout en servidor exitoso");
-  } catch (error: any) {
-    /* Ya no es necesario para login móvil
-    if (error?.response?.status === 419) {
-      console.log("Token CSRF expirado (normal)");
-    } else */ 
-    if (error?.response?.status === 401) {
-      console.log("No hay sesión activa en servidor");
-    } else {
-      console.log("Error en logout del servidor:", error?.response?.status || error?.message);
-    }
-  }
+  await logoutFromServer();
   
   // 2. Limpiar token CSRF (mantenido por compatibilidad)
   clearCsrfToken();

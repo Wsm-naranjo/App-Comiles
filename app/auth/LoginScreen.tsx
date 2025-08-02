@@ -58,7 +58,7 @@ export default function LoginScreen() {
 
       // Proceso principal de login
       console.log("1. Iniciando proceso de login con la nueva API...");
-      
+
       /* Ya no es necesario obtener token CSRF para la nueva API
       // 1. Obtener un token CSRF fresco
       const token = await getCsrfToken(true);
@@ -115,24 +115,33 @@ export default function LoginScreen() {
       // Verificar si la respuesta contiene el nuevo formato con token JWT
       if (response.data && response.data.token && response.data.user) {
         console.log("Formato nuevo detectado con token JWT");
-        
+
         // Guardar el token JWT en AsyncStorage
         await AsyncStorage.setItem("userToken", response.data.token);
-        console.log("Token JWT guardado:", response.data.token);
-        
+        console.log("Token JWT guardado exitosamente");
+        console.log(
+          "Token (primeros 20 caracteres):",
+          response.data.token.substring(0, 20) + "..."
+        );
+
         // Guardar los datos del usuario usando el contexto
-        await setUserData(response.data.user);
-        
+        setUserData(response.data.user);
+
         console.log("Login exitoso!");
+        console.log(
+          "Usuario:",
+          response.data.user.nombres,
+          response.data.user.apellidos
+        );
         console.log("Navegando al loading screen...");
-        
+
         // Navegar al loading screen
         router.replace("/plugins/loading");
       }
       // Verificar si la respuesta contiene datos del usuario en formato antiguo (login exitoso)
       else if (response.data && response.data.idusuario) {
         // Guardar los datos del usuario usando el contexto
-        await setUserData(response.data);
+        setUserData(response.data);
 
         console.log("Login exitoso!");
         console.log("Usuario:", response.data.nombres, response.data.apellidos);
@@ -145,13 +154,16 @@ export default function LoginScreen() {
         // Fallback para el formato con status
         if (response.data.token) {
           await AsyncStorage.setItem("userToken", response.data.token);
-          console.log("Token JWT guardado (formato status):", response.data.token);
+          console.log(
+            "Token JWT guardado (formato status):",
+            response.data.token
+          );
         }
         if (response.data.datos) {
-          await setUserData(response.data.datos);
+          setUserData(response.data.datos);
         } else if (response.data.user) {
           // Formato alternativo que podría venir con user en lugar de datos
-          await setUserData(response.data.user);
+          setUserData(response.data.user);
         }
         router.replace("/plugins/loading");
       } else {
@@ -165,7 +177,7 @@ export default function LoginScreen() {
         setError(
           "Error de token CSRF. Configura el servidor para excluir 'login' del middleware CSRF."
         );
-      } else */ 
+      } else */
       if (err?.response?.status === 401) {
         // Manejar respuesta de credenciales incorrectas del servidor
         const errorMessage =

@@ -1,5 +1,5 @@
 import { useUserData } from "@/hooks/useUserData";
-import api, { clearCsrfToken } from "@/services/api";
+import { clearCsrfToken, logoutFromServer } from "@/services/api";
 import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
@@ -23,17 +23,12 @@ export default function LogoutScreen() {
       setLoadingText("Cerrando sesión en el servidor...");
       await new Promise((resolve) => setTimeout(resolve, 400));
 
-      try {
-        console.log("Enviando petición POST /logout al servidor...");
-        const response = await api.post("/api/mobile/logout");
-        console.log("Logout exitoso en el servidor:", response.status);
-      } catch (serverError: any) {
-        console.log(
-          "Error en logout del servidor:",
-          serverError?.response?.status || serverError?.message
-        );
+      // Usar la nueva función de logout que maneja el token correctamente
+      const logoutSuccess = await logoutFromServer();
+      if (logoutSuccess) {
+        console.log("Logout exitoso en el servidor");
+      } else {
         console.log("Continuando con logout local...");
-        // Continuar con el logout local aunque falle el servidor
       }
 
       // Paso 2: Limpiar datos locales
@@ -49,7 +44,7 @@ export default function LogoutScreen() {
 
       // Limpiar datos del usuario usando el contexto
       await clearUserData();
-      await AsyncStorage.removeItem("userToken");
+      await clearToken(); // Usar la función específica para limpiar el token
       await AsyncStorage.removeItem("csrfToken");
       console.log("Items específicos eliminados");
 
