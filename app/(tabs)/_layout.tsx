@@ -12,10 +12,10 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: '#1F2937', // Fondo oscuro profesional
           borderTopColor: '#374151',
-          borderTopWidth: 1,
-          height: Platform.OS === 'ios' ? 85 : 65,
+          borderTopWidth: 0,
+          height: Platform.OS === 'ios' ? 85 : 70,
           paddingBottom: Platform.OS === 'ios' ? 25 : 10,
-          paddingTop: 10,
+          // paddingTop: 10,
         },
         tabBarLabelStyle: {
           fontSize: 12,
@@ -25,8 +25,7 @@ export default function TabLayout() {
         tabBarIconStyle: {
           marginTop: 2,
         },
-      }}
-    >
+      }}>
       <Tabs.Screen
         name="home"
         options={{
@@ -58,15 +57,6 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Perfil',
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="user" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="BookPage"
-        options={{
-          title: 'Book',
           tabBarIcon: ({ color, size }) => (
             <Feather name="user" size={size} color={color} />
           ),

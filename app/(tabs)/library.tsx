@@ -212,7 +212,11 @@ export default function LibraryScreen() {
                             ? `https://data.prolipadigital.com.ec/archivos/upload/libro/${libro.weblibro}/${libro.portada}`
                             : 'https://via.placeholder.com/80x120',
                         }}
-                        style={{ width: "100%", height: "100%", borderRadius: 5 }}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          borderRadius: 5,
+                        }}
                         resizeMode="cover"
                       />
                     </View>
@@ -249,8 +253,8 @@ export default function LibraryScreen() {
               {filteredBooks.map(libro => (
                 <TouchableOpacity
                   key={libro.idlibro}
-                  className="bg-gray-800 p-4 rounded-xl mb-4"
-                  onPress={() => {
+                  className="bg-gray-800 rounded-2xl p-4 mb-4 shadow-md"
+                  onPress={() =>
                     router.push({
                       pathname: '/Books/bookPage',
                       params: {
@@ -259,72 +263,49 @@ export default function LibraryScreen() {
                         idasignatura: libro.asignatura_idasignatura,
                         nombreLibro: libro.weblibro,
                       },
-                    });
-                  }}>
-                  <View className="flex-row">
-                    <View className="w-16 h-22 bg-gray-700 rounded-lg mr-4 items-center justify-center">
+                    })
+                  }>
+                  <View className="flex-row gap-4">
+                    <View className="w-16 aspect-[3/4] bg-gray-700 rounded-lg overflow-hidden">
                       <Image
                         source={{
                           uri: libro.portada
                             ? `https://data.prolipadigital.com.ec/archivos/upload/libro/${libro.weblibro}/${libro.portada}`
                             : 'https://via.placeholder.com/64x88',
                         }}
-                        style={{ width: "100%", height: "100%", borderRadius: 5 }}
                         resizeMode="cover"
+                        className="w-full h-full"
                       />
                     </View>
 
-                    <View className="flex-1">
-                      <View className="flex-row items-start justify-between mb-1">
-                        <Text
-                          className="text-white font-bold text-base flex-1 mr-2"
-                          numberOfLines={2}>
-                          {libro.nombrelibro}
+                    <View className="flex-1 justify-between">
+                      <View className="mb-1">
+                        <View className="flex-row justify-between items-start mb-1">
+                          <Text
+                            className="text-white font-semibold text-base flex-1 pr-2"
+                            numberOfLines={2}>
+                            {libro.nombrelibro}
+                          </Text>
+                          <Feather name="book-open" size={16} color="#3B82F6" />
+                        </View>
+                        <Text className="text-gray-400 text-sm">
+                          {libro.nombreasignatura}
                         </Text>
-                        <Feather name="book-open" size={16} color="#3B82F6" />
                       </View>
 
-                      <Text className="text-gray-400 text-sm mb-1">
-                        {libro.nombreasignatura}
-                      </Text>
-
-                      {/* <View className="mb-2">
-                        <View className="bg-gray-700 rounded-full h-1.5">
-                          <View
-                            className="bg-blue-500 h-1.5 rounded-full"
-                            style={{ width: `${Math.random() * 100}%` }}
-                          />
-                        </View>
-                        <Text className="text-gray-400 text-xs mt-1 text-center">
-                          {Math.floor(Math.random() * 100)}%
-                        </Text>
-                      </View> */}
-
-                      <View className="flex-row items-center mb-2">
+                      <View className="flex-row items-center mb-1">
                         <View
-                          className={`px-2 py-1 rounded-full mr-2 ${getSerieBgColor(libro.serie || 'default')}`}>
+                          className={`px-2 py-0.5 rounded-full mr-2 ${getSerieBgColor(libro.serie || 'default')}`}>
                           <Text className="text-white text-xs font-semibold">
                             {libro.serie || 'N/A'}
                           </Text>
                         </View>
-                        <Text className="text-gray-500 text-xs">
+                        <Text className="text-gray-400 text-xs">
                           Año: {libro.anio}
                         </Text>
                       </View>
 
-                      {/* <View className="mb-2">
-                        <View className="bg-gray-700 rounded-full h-1.5">
-                          <View
-                            className="bg-blue-500 h-1.5 rounded-full"
-                            style={{ width: `${Math.random() * 100}%` }}
-                          />
-                        </View>
-                        <Text className="text-gray-400 text-xs mt-1">
-                          Progreso: {Math.floor(Math.random() * 100)}%
-                        </Text>
-                      </View> */}
-
-                      <View className="flex-row items-center justify-between">
+                      <View className="flex-row justify-between">
                         <Text className="text-gray-500 text-xs">
                           ID: {libro.idlibro}
                         </Text>
