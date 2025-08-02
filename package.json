@@ -12,6 +12,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "check-env": "node scripts/check-environment.js",
+    "test-institution": "node scripts/test-institution.js",
     "build:dev": "APP_ENV=development eas build --profile development",
     "build:preview": "APP_ENV=production eas build --profile preview",
     "build:prod": "APP_ENV=production eas build --profile production",

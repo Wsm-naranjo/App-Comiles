@@ -3,10 +3,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
-  Image,
-  Text,
-  View,
+    ActivityIndicator,
+    Image,
+    Text,
+    View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -48,23 +48,40 @@ export default function LoadingScreen() {
         
         // Validar tipo de institución
         setLoadingText('Verificando permisos de institución...');
+        console.log('🔍 INICIANDO VALIDACIÓN DE INSTITUCIÓN');
+        
         try {
           // Importar dinámicamente para evitar problemas de ciclo de dependencias
           const { validateInstitutionType } = await import('@/services/user/validateInstitutionType');
-          console.log('Validando tipo de institución', parsedData.institucion_idInstitucion);
+          
+          console.log('📞 Llamando a validateInstitutionType...');
           const isValidInstitution = await validateInstitutionType(parsedData.institucion_idInstitucion);
-          console.log('Validación de tipo de institución', isValidInstitution);
+          
+          console.log('🎯 RESULTADO DE VALIDACIÓN:');
+          console.log(`   Institución ID: ${parsedData.institucion_idInstitucion}`);
+          console.log(`   Es válida: ${isValidInstitution}`);
+          console.log(`   Institución: ${parsedData.institucion?.nombreInstitucion}`);
+          
           if (isValidInstitution) {
-            console.log('Institución validada correctamente');
-            console.log('Navegando a home...');
+            console.log('✅ Institución validada correctamente - Navegando a home');
+            setLoadingText('Acceso autorizado...');
+            await new Promise(resolve => setTimeout(resolve, 500));
             router.replace('/(tabs)/home');
           } else {
-            console.log('Institución no autorizada');
+            console.log('❌ Institución no autorizada - Navegando a AccessDenied');
+            setLoadingText('Acceso denegado...');
+            await new Promise(resolve => setTimeout(resolve, 500));
             router.replace('/auth/AccessDenied');
           }
         } catch (validationError) {
-          console.error('Error validando institución:', validationError);
-          router.replace('/(tabs)/home'); // Fallback a home en caso de error de validación
+          console.error('💥 ERROR CRÍTICO EN VALIDACIÓN:', validationError);
+          console.error('Stack trace:', validationError);
+          
+          // En lugar de ir a home automáticamente, vamos a AccessDenied por seguridad
+          console.log('🚨 Por seguridad, enviando a AccessDenied debido al error');
+          setLoadingText('Error de validación...');
+          await new Promise(resolve => setTimeout(resolve, 500));
+          router.replace('/auth/AccessDenied');
         }
       } else {
         console.log('No hay datos, regresando al login...');

@@ -1,5 +1,6 @@
 import { clearToken, getCurrentToken, logoutFromServer } from "@/services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { debugInstitutionValidation, testInstitutionEndpoint, testInstitutionValidation } from "./institutionDebug";
 
 /**
  * Utilidades para manejo de autenticación
@@ -68,3 +69,7 @@ export const fullReset = async (): Promise<void> => {
   
   console.log("=== FIN RESET COMPLETO ===");
 };
+
+// Funciones de debugging para institución
+export { debugInstitutionValidation, testInstitutionEndpoint, testInstitutionValidation };
+

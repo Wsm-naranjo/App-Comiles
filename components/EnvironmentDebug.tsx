@@ -76,6 +76,46 @@ export const EnvironmentDebug: React.FC<EnvironmentDebugProps> = ({
         </Text>
       </View>
 
+      <View style={{ borderTopWidth: 1, borderTopColor: "#333", paddingTop: 12, marginTop: 8 }}>
+        <Text style={{ color: "white", fontSize: 12, fontWeight: "bold", marginBottom: 8 }}>
+          🧪 DEBUGGING TOOLS
+        </Text>
+        
+        <TouchableOpacity
+          onPress={async () => {
+            const { debugInstitutionValidation } = await import("@/utils/institutionDebug");
+            debugInstitutionValidation();
+          }}
+          style={{
+            backgroundColor: "#1f2937",
+            padding: 8,
+            borderRadius: 6,
+            marginBottom: 6,
+          }}
+        >
+          <Text style={{ color: "#60a5fa", fontSize: 11, textAlign: "center" }}>
+            🏛️ Debug Validación Institución
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={async () => {
+            const { testInstitutionEndpoint } = await import("@/utils/institutionDebug");
+            testInstitutionEndpoint();
+          }}
+          style={{
+            backgroundColor: "#1f2937",
+            padding: 8,
+            borderRadius: 6,
+            marginBottom: 8,
+          }}
+        >
+          <Text style={{ color: "#10b981", fontSize: 11, textAlign: "center" }}>
+            🌐 Test Conectividad API
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       <Text style={{ color: "#888", fontSize: 10, textAlign: "center" }}>
         💡 Tip: Toca 3 veces el escudo para abrir este debug
       </Text>
