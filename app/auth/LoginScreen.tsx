@@ -213,7 +213,7 @@ export default function LoginScreen() {
           <TapIndicator tapCount={tapCount} maxTaps={3} />
         </TouchableOpacity>
         <Text className="text-3xl font-bold text-white text-center">
-          Unidades Educativas Fuerzas Terrestres del Ecuador
+          Unidades Educativas Fuerzas Aereas del Ecuador
         </Text>
       </View>
 
