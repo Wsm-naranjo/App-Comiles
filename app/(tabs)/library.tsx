@@ -1,12 +1,14 @@
 import useSeries from '@/hooks/useSeries';
 import useUserBooks from '@/hooks/useUserBooks';
-import { LibroEstudiante } from '@/services/booksService';
+import BooksService, { LibroEstudiante } from '@/services/booksService';
+import { useUser } from '@/services/UserContext';
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
   FlatList,
   Image,
+  Modal,
   Text,
   TextInput,
   TouchableOpacity,
@@ -20,12 +22,18 @@ export default function LibraryScreen() {
     cantidadLibros,
     isLoading: librosLoading,
     error: librosError,
+    refetch: refetchLibros,
   } = useUserBooks();
   const { seriesConLibros, isLoading: seriesLoading } = useSeries();
+  const { userData } = useUser();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSerie, setSelectedSerie] = useState('Todas');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [bookCode, setBookCode] = useState('');
+  const [isAddingBook, setIsAddingBook] = useState(false);
+  const [addBookMessage, setAddBookMessage] = useState('');
 
   const seriesOptions = ['Todas', ...seriesConLibros.map(s => s.nombre_serie)];
 
@@ -52,6 +60,54 @@ export default function LibraryScreen() {
     ];
     const hash = serie.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
     return colors[hash % colors.length];
+  };
+
+  const handleAddBook = async () => {
+    if (!userData) {
+      setAddBookMessage('Error: No se encontraron datos del usuario');
+      return;
+    }
+
+    if (!bookCode.trim()) {
+      setAddBookMessage('Por favor ingresa un código válido');
+      return;
+    }
+
+    setIsAddingBook(true);
+    setAddBookMessage('');
+
+    try {
+      const resultado = await BooksService.agregarLibroPorCodigo(
+        bookCode.trim(),
+        userData
+      );
+
+      if (resultado.success) {
+        setAddBookMessage('¡Libro agregado exitosamente!');
+        // Refrescar la lista de libros
+        await refetchLibros();
+        // Cerrar modal después de un breve delay para mostrar el mensaje
+        setTimeout(() => {
+          setModalVisible(false);
+          setBookCode('');
+          setAddBookMessage('');
+        }, 1500);
+      } else {
+        setAddBookMessage(resultado.message || 'Error al agregar el libro');
+      }
+    } catch (error) {
+      console.error('Error inesperado:', error);
+      setAddBookMessage('Error inesperado. Intenta nuevamente.');
+    } finally {
+      setIsAddingBook(false);
+    }
+  };
+
+  const handleCancelAddBook = () => {
+    setModalVisible(false);
+    setBookCode('');
+    setAddBookMessage('');
+    setIsAddingBook(false);
   };
 
   const BookCardGrid = ({ libro }: { libro: LibroEstudiante }) => (
@@ -179,6 +235,14 @@ export default function LibraryScreen() {
           </View>
         </View>
 
+        {/* Add Book Button */}
+        <TouchableOpacity
+          onPress={() => setModalVisible(true)}
+          className="bg-blue-600 p-3 rounded-xl mb-4 flex-row items-center justify-center">
+          <Feather name="plus" size={20} color="white" style={{ marginRight: 8 }} />
+          <Text className="text-white font-semibold text-base">Agregar Libro</Text>
+        </TouchableOpacity>
+
         {/* Search Bar */}
         <View className="relative mb-4">
           <TextInput
@@ -249,6 +313,73 @@ export default function LibraryScreen() {
           />
         )}
       </View>
+
+      {/* Modal for Adding Book */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={handleCancelAddBook}>
+        <View className="flex-1 justify-center items-center bg-black/50">
+          <View className="bg-gray-800 rounded-2xl p-6 mx-4 w-80">
+            <Text className="text-white text-xl font-bold mb-4 text-center">
+              Agregar Libro
+            </Text>
+            
+            <Text className="text-gray-300 text-sm mb-2">
+              Código del libro:
+            </Text>
+            
+            <TextInput
+              placeholder="Ingresa el código del libro"
+              placeholderTextColor="#6B7280"
+              value={bookCode}
+              onChangeText={setBookCode}
+              className="bg-gray-700 text-white p-3 rounded-lg mb-4"
+              autoFocus={true}
+              editable={!isAddingBook}
+            />
+
+            {/* Message Display */}
+            {addBookMessage ? (
+              <View className="mb-4">
+                <Text 
+                  className={`text-center text-sm ${
+                    addBookMessage.includes('exitosamente') 
+                      ? 'text-green-400' 
+                      : 'text-red-400'
+                  }`}>
+                  {addBookMessage}
+                </Text>
+              </View>
+            ) : null}
+            
+            <View className="flex-row justify-between gap-4">
+              <TouchableOpacity
+                onPress={handleCancelAddBook}
+                className="flex-1 bg-gray-600 p-3 rounded-lg"
+                disabled={isAddingBook}>
+                <Text className="text-white text-center font-semibold">
+                  Cancelar
+                </Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity
+                onPress={handleAddBook}
+                className={`flex-1 p-3 rounded-lg ${
+                  isAddingBook || !bookCode.trim() 
+                    ? 'bg-gray-500' 
+                    : 'bg-blue-600'
+                }`}
+                disabled={isAddingBook || !bookCode.trim()}>
+                <Text className="text-white text-center font-semibold">
+                  {isAddingBook ? 'Agregando...' : 'Aceptar'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }

@@ -263,6 +263,111 @@ export class BooksService {
       return 0;
     }
   }
+
+  /**
+   * Agrega un libro por código al usuario
+   */
+  static async agregarLibroPorCodigo(
+    codigo: string,
+    userData: UserData,
+    periodoData?: PeriodoData
+  ): Promise<{
+    success: boolean;
+    message: string;
+    error?: string;
+  }> {
+    try {
+      console.log('=== AGREGANDO LIBRO POR CÓDIGO ===');
+      console.log('Código:', codigo);
+      console.log('Usuario:', `${userData.nombres} ${userData.apellidos}`);
+
+      // Si no se proporciona periodoData, obtenerlo
+      let periodo = periodoData;
+      if (!periodo) {
+        console.log('Obteniendo período de la institución...');
+        const periodoObtenido = await this.obtenerPeriodoInstitucion(userData.institucion_idInstitucion);
+        
+        if (!periodoObtenido) {
+          return {
+            success: false,
+            message: 'No se pudo obtener el período de la institución',
+            error: 'PERIODO_NO_ENCONTRADO'
+          };
+        }
+        periodo = periodoObtenido;
+      }
+
+
+
+      const body = {
+        codigo: codigo,
+        idusuario: userData.idusuario,
+        id_periodo: periodo.periodo,
+        id_institucion: userData.institucion_idInstitucion
+      };
+
+      console.log('Body del request:', body);
+
+      const response = await api.post('/api/codigoslibros', body );
+         
+
+      console.log('=== RESPUESTA AGREGAR LIBRO ===');
+      console.log('Status:', response.status);
+      console.log('Data:', response.data);
+
+      if (response.status === 200 || response.status === 201) {
+        return {
+          success: true,
+          message: 'Libro agregado exitosamente'
+        };
+      } else {
+        return {
+          success: false,
+          message: 'Error al agregar el libro',
+          error: 'RESPUESTA_INESPERADA'
+        };
+      }
+
+    } catch (error: any) {
+      console.error('=== ERROR AGREGANDO LIBRO ===');
+      console.error('Error:', error);
+      console.error('Response status:', error?.response?.status);
+      console.error('Response data:', error?.response?.data);
+      console.error('Message:', error?.message);
+
+      // Manejar diferentes tipos de errores
+      let message = 'Error al agregar el libro';
+      let errorCode = 'ERROR_DESCONOCIDO';
+
+      if (error?.response?.status === 400) {
+        message = 'Código de libro inválido o ya existe';
+        errorCode = 'CODIGO_INVALIDO';
+      } else if (error?.response?.status === 404) {
+        message = 'Código de libro no encontrado';
+        errorCode = 'CODIGO_NO_ENCONTRADO';
+      } else if (error?.response?.status === 403) {
+        message = 'No tienes permisos para agregar este libro';
+        errorCode = 'SIN_PERMISOS';
+      } else if (error?.response?.status >= 500) {
+        message = 'Error del servidor. Intenta más tarde';
+        errorCode = 'ERROR_SERVIDOR';
+      } else if (error?.message === 'Network Error') {
+        message = 'Error de conexión. Verifica tu internet';
+        errorCode = 'ERROR_RED';
+      }
+
+      return {
+        success: false,
+        message,
+        error: errorCode
+      };
+    }
+  }
 }
 
 export default BooksService;
+
+
+
+
+

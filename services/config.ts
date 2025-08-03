@@ -3,7 +3,7 @@ import Constants from "expo-constants";
 // Configuración de URLs por entorno
 const config = {
   development: {
-    baseURL: "http://10.10.1.220:8000", // URL local
+    baseURL: "http://192.168.1.19:8000", // URL local
     environment: "development",
   },
   production: {
