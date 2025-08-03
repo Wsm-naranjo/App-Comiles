@@ -314,17 +314,55 @@ export class BooksService {
       console.log('=== RESPUESTA AGREGAR LIBRO ===');
       console.log('Status:', response.status);
       console.log('Data:', response.data);
+      console.log('Data status:', response.data.status);
+      console.log('Data status type:', typeof response.data.status);
 
-      if (response.status === 200 || response.status === 201) {
-        return {
-          success: true,
-          message: 'Libro agregado exitosamente'
-        };
+      // Verificar la respuesta basada en response.data.status
+      if (response.data && typeof response.data.status !== 'undefined') {
+        const dataStatus = response.data.status;
+        
+        console.log('Evaluando dataStatus:', dataStatus);
+  
+        
+        if (dataStatus == 0) {  // Usar == para manejar tanto string como number
+          // El libro existe pero el código ya fue ocupado
+          console.log('🔴 Código ya usado - Status 0');
+          return {
+            success: false,
+            message: 'Este código ya fue utilizado anteriormente',
+            error: 'CODIGO_YA_USADO'
+          };
+        } else if (dataStatus == 1) {  // Usar == para manejar tanto string como number
+          // El libro existe y está disponible - se puede agregar
+          console.log('✅ Código válido - Status 1');
+          return {
+            success: true,
+            message: 'Libro agregado exitosamente'
+          };
+        } else if (dataStatus == 2) {  // Usar == para manejar tanto string como number
+          // El código no existe
+          console.log('❌ Código no existe - Status 2');
+          return {
+            success: false,
+            message: 'El código ingresado no existe',
+            error: 'CODIGO_NO_EXISTE'
+          };
+        } else {
+          // Cualquier otro status no esperado
+          console.log('⚠️ Status desconocido:', dataStatus);
+          return {
+            success: false,
+            message: `Respuesta inesperada del servidor (status: ${dataStatus})`,
+            error: 'STATUS_DESCONOCIDO'
+          };
+        }
       } else {
+        // Si no hay data.status, algo está mal con la respuesta
+        console.log('❌ No se encontró data.status en la respuesta');
         return {
           success: false,
-          message: 'Error al agregar el libro',
-          error: 'RESPUESTA_INESPERADA'
+          message: 'Respuesta inválida del servidor',
+          error: 'RESPUESTA_INVALIDA'
         };
       }
 
