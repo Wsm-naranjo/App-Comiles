@@ -1,3 +1,4 @@
+import ModalAgregarLibro from '@/components/ModalAgregarLibro';
 import useSeries from '@/hooks/useSeries';
 import useUserBooks from '@/hooks/useUserBooks';
 import { LibroEstudiante } from '@/services/booksService';
@@ -7,6 +8,8 @@ import { useState } from 'react';
 import {
   FlatList,
   Image,
+  KeyboardAvoidingView,
+  Platform,
   Text,
   TextInput,
   TouchableOpacity,
@@ -20,12 +23,14 @@ export default function LibraryScreen() {
     cantidadLibros,
     isLoading: librosLoading,
     error: librosError,
+    refetch,
   } = useUserBooks();
   const { seriesConLibros, isLoading: seriesLoading } = useSeries();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSerie, setSelectedSerie] = useState('Todas');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [modalVisible, setModalVisible] = useState(false);
 
   const seriesOptions = ['Todas', ...seriesConLibros.map(s => s.nombre_serie)];
 
@@ -79,10 +84,14 @@ export default function LibraryScreen() {
           resizeMode="cover"
         />
       </View>
-      <Text className="text-white font-bold text-sm mb-1 text-center" numberOfLines={2}>
+      <Text
+        className="text-white font-bold text-sm mb-1 text-center"
+        numberOfLines={2}>
         {libro.nombrelibro}
       </Text>
-      <Text className="text-gray-400 text-xs mb-2 text-center" numberOfLines={1}>
+      <Text
+        className="text-gray-400 text-xs mb-2 text-center"
+        numberOfLines={1}>
         {libro.nombreasignatura}
       </Text>
       <View className="flex-row items-center justify-between">
@@ -153,71 +162,97 @@ export default function LibraryScreen() {
     </TouchableOpacity>
   );
 
+  const renderBookItem = ({ item }: { item: LibroEstudiante }) =>
+    viewMode === 'grid' ? (
+      <BookCardGrid libro={item} />
+    ) : (
+      <BookCardList libro={item} />
+    );
+
   return (
     <SafeAreaView className="flex-1 bg-black">
-      <View className="p-6">
-        {/* Header */}
-        <View className="flex-row justify-between items-center mb-4">
-          <View>
-            <Text className="text-white text-2xl font-bold">Mi Biblioteca</Text>
-            <Text className="text-gray-400 text-sm">
-              {librosLoading
-                ? 'Cargando...'
-                : `${cantidadLibros} libros disponibles`}
-            </Text>
-          </View>
-          <View className="flex-row space-x-2">
-            <TouchableOpacity
-              onPress={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
-              className="p-2 bg-gray-800 rounded-lg">
-              <Feather
-                name={viewMode === 'grid' ? 'list' : 'grid'}
-                size={20}
-                color="white"
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Search Bar */}
-        <View className="relative mb-4">
-          <TextInput
-            placeholder="Buscar libros o asignaturas..."
-            placeholderTextColor="#6B7280"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            className="bg-gray-800 text-white p-4 pl-12 rounded-xl"
-          />
-          <Feather
-            name="search"
-            size={20}
-            color="#6B7280"
-            style={{ position: 'absolute', left: 16, top: 16 }}
-          />
-        </View>
-
-        {/* Series filter */}
-        <FlatList
-          horizontal
-          data={seriesOptions}
-          keyExtractor={item => item}
-          className="mb-4"
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => setSelectedSerie(item)}
-              className={`mr-3 px-4 py-2 rounded-full ${
-                selectedSerie === item ? 'bg-blue-600' : 'bg-gray-800'
-              }`}>
-              <Text
-                className={`font-semibold ${
-                  selectedSerie === item ? 'text-white' : 'text-gray-400'
-                }`}>
-                {item}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        className="flex-1">
+        <View className="px-6 pt-6">
+          {/* Header */}
+          <View className="flex-row justify-between items-center mb-4">
+            <View>
+              <Text className="text-white text-2xl font-bold">
+                Mi Biblioteca
               </Text>
-            </TouchableOpacity>
-          )}
-        />
+              <Text className="text-gray-400 text-sm">
+                {librosLoading
+                  ? 'Cargando...'
+                  : `${cantidadLibros} libros disponibles`}
+              </Text>
+            </View>
+            <View className="flex-row space-x-2 gap-4">
+              <TouchableOpacity
+                onPress={() =>
+                  setViewMode(viewMode === 'grid' ? 'list' : 'grid')
+                }
+                className="p-2 bg-gray-800 rounded-lg">
+                <Feather
+                  name={viewMode === 'grid' ? 'list' : 'grid'}
+                  size={20}
+                  color="white"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setModalVisible(true)}
+                className="p-2 bg-green-600 rounded-lg">
+                <Feather name={'plus'} size={20} color="white" />
+              </TouchableOpacity>
+              <ModalAgregarLibro
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+                refetch={refetch}
+                isLoading={librosLoading}
+              />
+            </View>
+          </View>
+
+          {/* Search Bar */}
+          <View className="relative mb-4">
+            <TextInput
+              placeholder="Buscar libros o asignaturas..."
+              placeholderTextColor="#6B7280"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              className="bg-gray-800 text-white p-4 pl-12 rounded-xl"
+            />
+            <Feather
+              name="search"
+              size={20}
+              color="#6B7280"
+              style={{ position: 'absolute', left: 16, top: 16 }}
+            />
+          </View>
+
+          {/* Series filter */}
+          <FlatList
+            horizontal
+            data={seriesOptions}
+            keyExtractor={item => item}
+            className="mb-4"
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => setSelectedSerie(item)}
+                className={`mr-3 px-4 py-2 rounded-full ${
+                  selectedSerie === item ? 'bg-blue-600' : 'bg-gray-800'
+                }`}>
+                <Text
+                  className={`font-semibold ${
+                    selectedSerie === item ? 'text-white' : 'text-gray-400'
+                  }`}>
+                  {item}
+                </Text>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
 
         {/* Book List */}
         {librosLoading ? (
@@ -231,24 +266,19 @@ export default function LibraryScreen() {
         ) : (
           <FlatList
             data={filteredBooks}
+            contentContainerStyle={{ paddingHorizontal: 24 }}
             key={viewMode}
             numColumns={viewMode === 'grid' ? 2 : 1}
             columnWrapperStyle={
               viewMode === 'grid'
-                ? { justifyContent: 'space-between' }
+                ? { justifyContent: 'space-between', marginBottom: 12 }
                 : undefined
             }
             keyExtractor={item => item.idlibro.toString()}
-            renderItem={({ item }) =>
-              viewMode === 'grid' ? (
-                <BookCardGrid libro={item} />
-              ) : (
-                <BookCardList libro={item} />
-              )
-            }
+            renderItem={renderBookItem}
           />
         )}
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
