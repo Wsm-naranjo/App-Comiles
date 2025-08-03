@@ -1,67 +1,68 @@
-import { useUserBooks } from "@/hooks/useUserBooks";
-import { useUserData } from "@/hooks/useUserData";
-import { Feather } from "@expo/vector-icons";
-import { useFocusEffect, useRouter } from "expo-router";
-import { useCallback } from "react";
+import { useUserBooks } from '@/hooks/useUserBooks';
+import { useUserData } from '@/hooks/useUserData';
+import { Feather } from '@expo/vector-icons';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback } from 'react';
 import {
   Alert,
   Image,
+  Linking,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const menuItems = [
   {
     id: 1,
-    title: "Editar Perfil",
-    icon: "edit-3",
-    color: "text-blue-400",
-    action: "editProfile",
+    title: 'Editar Perfil',
+    icon: 'edit-3',
+    color: 'text-blue-400',
+    action: 'editProfile',
   },
   {
     id: 2,
-    title: "Configuración de Lectura",
-    icon: "settings",
-    color: "text-gray-400",
-    action: "settings",
+    title: 'Configuración de Lectura',
+    icon: 'settings',
+    color: 'text-gray-400',
+    action: 'settings',
   },
   {
     id: 3,
-    title: "Notificaciones",
-    icon: "bell",
-    color: "text-yellow-400",
-    action: "notifications",
+    title: 'Notificaciones',
+    icon: 'bell',
+    color: 'text-yellow-400',
+    action: 'notifications',
   },
   {
     id: 4,
-    title: "Mis Notas y Marcadores",
-    icon: "bookmark",
-    color: "text-green-400",
-    action: "bookmarks",
+    title: 'Mis Notas y Marcadores',
+    icon: 'bookmark',
+    color: 'text-green-400',
+    action: 'bookmarks',
   },
   {
     id: 5,
-    title: "Historial de Lectura",
-    icon: "clock",
-    color: "text-purple-400",
-    action: "history",
+    title: 'Historial de Lectura',
+    icon: 'clock',
+    color: 'text-purple-400',
+    action: 'history',
   },
   {
     id: 6,
-    title: "Ayuda y Soporte",
-    icon: "help-circle",
-    color: "text-orange-400",
-    action: "help",
+    title: 'Ayuda y Soporte',
+    icon: 'help-circle',
+    color: 'text-orange-400',
+    action: 'help',
   },
   {
     id: 7,
-    title: "Acerca de",
-    icon: "info",
-    color: "text-gray-400",
-    action: "about",
+    title: 'Acerca de',
+    icon: 'info',
+    color: 'text-gray-400',
+    action: 'about',
   },
 ];
 
@@ -79,26 +80,26 @@ export default function ProfileScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      console.log("Profile screen focused, checking user data...");
+      console.log('Profile screen focused, checking user data...');
       if (!userData) {
-        console.log("No hay datos de usuario, redirigiendo al login");
-        router.replace("/");
+        console.log('No hay datos de usuario, redirigiendo al login');
+        router.replace('/');
       }
     }, [userData])
   );
 
   const handleLogout = async () => {
-    Alert.alert("Cerrar Sesión", "¿Estás seguro de que deseas cerrar sesión?", [
+    Alert.alert('Cerrar Sesión', '¿Estás seguro de que deseas cerrar sesión?', [
       {
-        text: "Cancelar",
-        style: "cancel",
+        text: 'Cancelar',
+        style: 'cancel',
       },
       {
-        text: "Cerrar Sesión",
-        style: "destructive",
+        text: 'Cerrar Sesión',
+        style: 'destructive',
         onPress: () => {
-          console.log("Iniciando logout desde profile...");
-          router.replace("/plugins/logout");
+          console.log('Iniciando logout desde profile...');
+          router.replace('/plugins/logout');
         },
       },
     ]);
@@ -106,40 +107,62 @@ export default function ProfileScreen() {
 
   const handleMenuAction = (action: string) => {
     switch (action) {
-      case "editProfile":
-        Alert.alert("Editar Perfil", "Función en desarrollo");
+      case 'editProfile':
+        Alert.alert('Editar Perfil', 'Función en desarrollo');
         break;
-      case "settings":
+      case 'settings':
         Alert.alert(
-          "Configuración de Lectura",
-          "Ajustes de fuente, brillo, modo nocturno, etc."
+          'Configuración de Lectura',
+          'Ajustes de fuente, brillo, modo nocturno, etc.'
         );
         break;
-      case "notifications":
+      case 'notifications':
         Alert.alert(
-          "Notificaciones",
-          "Recordatorios de lectura y nuevos libros"
+          'Notificaciones',
+          'Recordatorios de lectura y nuevos libros'
         );
         break;
-      case "bookmarks":
+      case 'bookmarks':
         Alert.alert(
-          "Mis Notas y Marcadores",
-          "Accede a todas tus notas y marcadores"
+          'Mis Notas y Marcadores',
+          'Accede a todas tus notas y marcadores'
         );
         break;
-      case "history":
+      case 'history':
         Alert.alert(
-          "Historial de Lectura",
-          "Revisa tu historial completo de lectura"
+          'Historial de Lectura',
+          'Revisa tu historial completo de lectura'
         );
         break;
-      case "help":
-        Alert.alert("Ayuda y Soporte", "Función en desarrollo");
+      case 'help':
+        // Alert.alert("Ayuda y Soporte", "Función en desarrollo");
+        const phoneNumber = '593987301532';
+        const whatsappUrl = `whatsapp://send?phone=${phoneNumber}`;
+        try {
+          async function toWaths() {
+            const supported = await Linking.canOpenURL(whatsappUrl);
+
+            if (supported) {
+              await Linking.openURL(whatsappUrl);
+            } else {
+              Alert.alert(
+                'Error',
+                'No se pudo abrir WhatsApp. Asegúrate de tener la aplicación instalada.'
+              );
+            }
+          }
+
+          toWaths()
+        } catch (error) {
+          console.error('An error occurred', error);
+          Alert.alert('Error', 'Ocurrió un error al intentar abrir WhatsApp.');
+        }
+
         break;
-      case "about":
+      case 'about':
         Alert.alert(
-          "Acerca de",
-          "Biblioteca Digital Educativa\nFuerzas Armadas del Ecuador\nVersión 1.0.0\n\nPlataforma de libros digitales para la formación militar profesional."
+          'Acerca de',
+          'Biblioteca Digital Educativa\nFuerzas Armadas del Ecuador\nVersión 1.0.0\n\nPlataforma de libros digitales para la formación militar profesional.'
         );
         break;
       default:
@@ -161,7 +184,7 @@ export default function ProfileScreen() {
             <View className="flex-row items-center">
               <View className="bg-white/20 p-4 rounded-full mr-4">
                 <Image
-                  source={require("@/assets/images/Escudo_Fuerza_Aerea_Ecuador.png")}
+                  source={require('@/assets/images/Escudo_Fuerza_Aerea_Ecuador.png')}
                   className="w-16 h-16"
                   resizeMode="contain"
                 />
@@ -177,7 +200,7 @@ export default function ProfileScreen() {
                   {getUserInstitution()}
                 </Text>
                 <Text className="text-blue-200 text-sm mt-2">
-                  ID: {userData?.idusuario || "N/A"}
+                  ID: {userData?.idusuario || 'N/A'}
                 </Text>
               </View>
             </View>
@@ -190,7 +213,7 @@ export default function ProfileScreen() {
             <View className="bg-gray-800 p-4 rounded-xl flex-1 mr-2 items-center">
               <Feather name="book-open" size={24} color="#3B82F6" />
               <Text className="text-white text-xl font-bold mt-2">
-                {librosLoading ? "..." : cantidadLibros}
+                {librosLoading ? '...' : cantidadLibros}
               </Text>
               <Text className="text-gray-400 text-sm text-center">
                 Libros en Biblioteca
@@ -237,7 +260,7 @@ export default function ProfileScreen() {
               <View className="ml-3 flex-1">
                 <Text className="text-gray-400 text-sm">Teléfono</Text>
                 <Text className="text-white font-semibold">
-                  {getUserPhone() || "No disponible"}
+                  {getUserPhone() || 'No disponible'}
                 </Text>
               </View>
             </View>
@@ -260,18 +283,17 @@ export default function ProfileScreen() {
         <View className="px-6 mb-6">
           <Text className="text-white text-lg font-bold mb-4">Opciones</Text>
 
-          {menuItems.map((item) => (
+          {menuItems.map(item => (
             <TouchableOpacity
               key={item.id}
               onPress={() => handleMenuAction(item.action)}
-              className="bg-gray-800 p-4 rounded-xl mb-3"
-            >
+              className="bg-gray-800 p-4 rounded-xl mb-3">
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center">
                   <Feather
                     name={item.icon as any}
                     size={20}
-                    color={item.color.replace("text-", "#")}
+                    color={item.color.replace('text-', '#')}
                     className={item.color}
                   />
                   <Text className="text-white font-semibold ml-3">
@@ -288,8 +310,7 @@ export default function ProfileScreen() {
         <View className="px-6 pb-6">
           <TouchableOpacity
             onPress={handleLogout}
-            className="bg-red-600 p-4 rounded-xl"
-          >
+            className="bg-red-600 p-4 rounded-xl">
             <View className="flex-row items-center justify-center">
               <Feather name="log-out" size={20} color="white" />
               <Text className="text-white font-bold ml-2">Cerrar Sesión</Text>
