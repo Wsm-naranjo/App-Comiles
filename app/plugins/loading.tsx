@@ -103,9 +103,11 @@ export default function LoadingScreen() {
             className="w-20 h-20 mb-4"
             resizeMode="contain"
           />
+          
           <Text className="text-white text-xl font-bold text-center">
             Biblioteca Digital
           </Text>
+
           <Text className="text-gray-400 text-sm text-center mt-1">
             Fuerzas Navales
           </Text>
