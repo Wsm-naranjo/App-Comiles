@@ -31,37 +31,60 @@ export default function ModalAgregarLibro({
         id_institucion: userData?.institucion.idInstitucion || 'ATEST1',
       });
 
-      console.log(res.data);
-      setSuccessMessage('¡Libro agregado correctamente!');
+      const { status, message } = res.data;
+
       setErrorMessage('');
-      await refetch();
+      setSuccessMessage('');
+
+      switch (status) {
+        case '1':
+          setSuccessMessage('¡Libro agregado correctamente!');
+          await refetch();
+          break;
+        case '5':
+          setErrorMessage(message || 'El código es de prueba diagnóstica.');
+          break;
+        case '3':
+          setErrorMessage('El código está bloqueado.');
+          break;
+        case '4':
+          setErrorMessage('El código ha sido devuelto.');
+          break;
+        case '2':
+          setErrorMessage('El código no existe.');
+          break;
+        case '0':
+          setErrorMessage('El código ya está registrado.');
+          break;
+        default:
+          setErrorMessage('Error desconocido.');
+          break;
+      }
     } catch (error) {
       const err = error as AxiosError;
       console.log(err.response);
-      setErrorMessage('Error al agregar el libro.');
+      setErrorMessage('Error al conectar con el servidor.');
       setSuccessMessage('');
     }
   }
 
-  const handleClose = () => {
+  const handleClose = async () => {
     setModalVisible(false);
     setCodigo('');
     setSuccessMessage('');
     setErrorMessage('');
+    await refetch()
   };
 
-  // Efecto para limpiar mensajes después de 3 segundos
+  // Auto-cerrar el modal solo si fue exitoso
   useEffect(() => {
-    if (successMessage || errorMessage) {
+    if (successMessage) {
       const timeout = setTimeout(() => {
-        setCodigo('');
-        setSuccessMessage('');
-        setErrorMessage('');
-        setModalVisible(false);
-      }, 700);
+        handleClose();
+      }, 1000);
       return () => clearTimeout(timeout);
     }
-  }, [successMessage, errorMessage]);
+  }, [successMessage]);
 
   return (
     <Modal
@@ -103,12 +126,16 @@ export default function ModalAgregarLibro({
               onPress={agregarLibro}
               disabled={codigo.length < 1 || isLoading}
               className="px-4 py-2 rounded-lg flex-1 bg-blue-600">
-              <Text className="text-white font-medium text-center">{isLoading ? "Añadiendo..." :"Aceptar"}</Text>
+              <Text className="text-white font-medium text-center">
+                {isLoading ? 'Añadiendo...' : 'Aceptar'}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleClose}
               className="px-4 py-2 rounded-lg flex-1 bg-gray-300">
-              <Text className="text-gray-800 font-medium text-center">Cancelar</Text>
+              <Text className="text-gray-800 font-medium text-center">
+                Cancelar
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
