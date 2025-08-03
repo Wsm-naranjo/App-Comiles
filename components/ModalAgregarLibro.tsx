@@ -31,7 +31,7 @@ export default function ModalAgregarLibro({
         id_institucion: userData?.institucion.idInstitucion || 'ATEST1',
       });
 
-      const { status, message } = res.data;
+      const { status } = res.data;
 
       setErrorMessage('');
       setSuccessMessage('');
@@ -41,17 +41,11 @@ export default function ModalAgregarLibro({
           setSuccessMessage('¡Libro agregado correctamente!');
           await refetch();
           break;
-        case '5':
-          setErrorMessage(message || 'El código es de prueba diagnóstica.');
-          break;
-        case '3':
-          setErrorMessage('El código está bloqueado.');
-          break;
-        case '4':
-          setErrorMessage('El código ha sido devuelto.');
-          break;
         case '2':
-          setErrorMessage('El código no existe.');
+        case '3':
+        case '4':
+        case '5':
+          setErrorMessage('Error al ingresar el código');
           break;
         case '0':
           setErrorMessage('El código ya está registrado.');
@@ -73,10 +67,9 @@ export default function ModalAgregarLibro({
     setCodigo('');
     setSuccessMessage('');
     setErrorMessage('');
-    await refetch()
+    await refetch();
   };
 
-  // Auto-cerrar el modal solo si fue exitoso
   useEffect(() => {
     if (successMessage) {
       const timeout = setTimeout(() => {
