@@ -206,7 +206,7 @@ export default function LoginScreen() {
       <View className="items-center mb-12">
         <TouchableOpacity onPress={handleTap} activeOpacity={0.8}>
           <Image
-            source={require("@/assets/images/Escudo_Fuerza_Aerea_Ecuador.png")}
+            source={require("@/assets/images/ESCUDO-ARMADA-DEL-ECUADOR.png")}
             className="w-[150px] h-[150px] mb-4"
             resizeMode="contain"
           />
