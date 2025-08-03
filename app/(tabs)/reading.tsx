@@ -61,7 +61,7 @@ const recentBookmarks = [
   },
   {
     id: 2,
-    bookTitle: 'Historia de las Fuerzas Armadas del Ecuador',
+    bookTitle: 'Historia de las Fuerzas Navales del Ecuador',
     chapter: 'Capítulo 12: Guerra del Cenepa',
     page: 387,
     note: 'Análisis estratégico del conflicto de 1995',

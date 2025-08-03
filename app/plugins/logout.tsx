@@ -97,7 +97,7 @@ export default function LogoutScreen() {
             Biblioteca Digital
           </Text>
           <Text className="text-gray-400 text-sm text-center mt-1">
-            Fuerzas Armadas del Ecuador
+            Fuerzas Navales del Ecuador
           </Text>
         </View>
 
