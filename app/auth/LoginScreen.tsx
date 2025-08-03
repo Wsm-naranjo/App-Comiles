@@ -19,8 +19,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
-  const [username, setUsername] = useState("test123");
-  const [password, setPassword] = useState("123123123");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -213,7 +213,7 @@ export default function LoginScreen() {
           <TapIndicator tapCount={tapCount} maxTaps={3} />
         </TouchableOpacity>
         <Text className="text-3xl font-bold text-white text-center">
-          Fuerzas Armadas del Ecuador
+          Unidades Educativas Fuerzas Terrestres del Ecuador
         </Text>
       </View>
 

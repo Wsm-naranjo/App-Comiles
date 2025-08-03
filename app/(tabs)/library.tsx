@@ -6,13 +6,13 @@ import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
-  FlatList,
-  Image,
-  Modal,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    FlatList,
+    Image,
+    Modal,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -63,6 +63,11 @@ export default function LibraryScreen() {
   };
 
   const handleAddBook = async () => {
+    // Evitar múltiples ejecuciones
+    if (isAddingBook) {
+      return;
+    }
+
     if (!userData) {
       setAddBookMessage('Error: No se encontraron datos del usuario');
       return;
@@ -91,19 +96,25 @@ export default function LibraryScreen() {
           setModalVisible(false);
           setBookCode('');
           setAddBookMessage('');
+          setIsAddingBook(false);
         }, 1500);
       } else {
         setAddBookMessage(resultado.message || 'Error al agregar el libro');
+        setIsAddingBook(false);
       }
     } catch (error) {
       console.error('Error inesperado:', error);
       setAddBookMessage('Error inesperado. Intenta nuevamente.');
-    } finally {
       setIsAddingBook(false);
     }
   };
 
   const handleCancelAddBook = () => {
+    // No permitir cancelar si se está procesando
+    if (isAddingBook) {
+      return;
+    }
+    
     setModalVisible(false);
     setBookCode('');
     setAddBookMessage('');
@@ -357,9 +368,13 @@ export default function LibraryScreen() {
             <View className="flex-row justify-between gap-4">
               <TouchableOpacity
                 onPress={handleCancelAddBook}
-                className="flex-1 bg-gray-600 p-3 rounded-lg"
+                className={`flex-1 p-3 rounded-lg ${
+                  isAddingBook ? 'bg-gray-500' : 'bg-gray-600'
+                }`}
                 disabled={isAddingBook}>
-                <Text className="text-white text-center font-semibold">
+                <Text className={`text-center font-semibold ${
+                  isAddingBook ? 'text-gray-400' : 'text-white'
+                }`}>
                   Cancelar
                 </Text>
               </TouchableOpacity>
