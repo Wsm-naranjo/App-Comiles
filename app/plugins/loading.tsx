@@ -3,10 +3,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    Image,
-    Text,
-    View,
+  ActivityIndicator,
+  Image,
+  Text,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -99,7 +99,7 @@ export default function LoadingScreen() {
         {/* Logo */}
         <View className="items-center mb-12">
           <Image
-            source={require('@/assets/images/Escudo_Fuerza_Aerea_Ecuador.png')}
+            source={require('@/assets/images/fuerzaterrestre.png')}
             className="w-20 h-20 mb-4"
             resizeMode="contain"
           />

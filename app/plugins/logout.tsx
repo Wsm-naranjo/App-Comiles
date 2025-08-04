@@ -89,7 +89,7 @@ export default function LogoutScreen() {
         {/* Logo */}
         <View className="items-center mb-12">
           <Image
-            source={require("@/assets/images/Escudo_Fuerza_Aerea_Ecuador.png")}
+            source={require("@/assets/images/fuerzaterrestre.png")}
             className="w-20 h-20 mb-4"
             resizeMode="contain"
           />

@@ -161,7 +161,7 @@ export default function ProfileScreen() {
             <View className="flex-row items-center">
               <View className="bg-white/20 p-4 rounded-full mr-4">
                 <Image
-                  source={require("@/assets/images/Escudo_Fuerza_Aerea_Ecuador.png")}
+                  source={require("@/assets/images/fuerzaterrestre.png")}
                   className="w-16 h-16"
                   resizeMode="contain"
                 />

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "U.E Fuerzas Aereas",
-    "slug": "U.E Fuerzas Aereas",
+    "name": "U.E Fuerzas Terrestres",
+    "slug": "U.E Fuerzas Terrestres",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

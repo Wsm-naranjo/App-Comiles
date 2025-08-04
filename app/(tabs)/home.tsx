@@ -38,7 +38,7 @@ export default function HomeScreen() {
         <View className="flex-row justify-between items-center p-6 pb-4">
           <View className="flex-row items-center">
             <Image
-              source={require('@/assets/images/Escudo_Fuerza_Aerea_Ecuador.png')}
+              source={require('@/assets/images/fuerzaterrestre.png')}
               className="w-12 h-12 mr-3"
               resizeMode="contain"
             />
