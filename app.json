@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "U.E Fuerzas Terrestres",
-    "slug": "U.E Fuerzas Terrestres",
+    "slug": "ue-fuerzas-terrestres",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -42,7 +42,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "d7b2a4ad-d645-4500-b442-d7497aaea482"
+        "projectId": "94bc8164-1685-4d18-824d-81b4d4e30efb"
       },
       "environment": "development",
       "apiTimeout": 10000,
