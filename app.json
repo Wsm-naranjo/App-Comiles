@@ -17,7 +17,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.prolipa.AppComilesTerrestres"
+      "package": "com.prolipa.appcomilesT"
     },
     "web": {
       "bundler": "metro",
@@ -42,7 +42,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "94bc8164-1685-4d18-824d-81b4d4e30efb"
+        "projectId": "97a7ac2f-8ddd-400a-b23a-5a709c084e41"
       },
       "environment": "development",
       "apiTimeout": 10000,

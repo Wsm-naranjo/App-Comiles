@@ -139,7 +139,7 @@ export default function ProfileScreen() {
       case "about":
         Alert.alert(
           "Acerca de",
-          "Biblioteca Digital Educativa\nFuerzas Armadas del Ecuador\nVersión 1.0.0\n\nPlataforma de libros digitales para la formación militar profesional."
+          "Biblioteca Digital Educativa\nFuerzas Terrestres del Ecuador\nVersión 1.0.0\n\nPlataforma de libros digitales para la formación militar profesional."
         );
         break;
       default:
