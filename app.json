@@ -2,7 +2,7 @@
   "expo": {
     "name": "U.E Fuerzas Aereas",
     "slug": "ue-fuerzas-aereas",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "appcomiles",
@@ -17,7 +17,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.prolipa.AppUEAereas"
+      "package": "com.prolipa.appcomilesA"
     },
     "web": {
       "bundler": "metro",
@@ -42,7 +42,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "f2eb4b7c-10af-48d5-9792-cdfd1dc82714"
+        "projectId": "38136efe-8d07-444d-9e1b-9d92f189a25c"
       },
       "environment": "development",
       "apiTimeout": 10000,

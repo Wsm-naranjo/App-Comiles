@@ -3,10 +3,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    Image,
-    Text,
-    View,
+  ActivityIndicator,
+  Image,
+  Text,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -107,7 +107,7 @@ export default function LoadingScreen() {
             Biblioteca Digital
           </Text>
           <Text className="text-gray-400 text-sm text-center mt-1">
-            Fuerzas Armadas del Ecuador
+            Fuerzas Aereas del Ecuador
           </Text>
         </View>
 
