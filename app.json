@@ -1,52 +1,21 @@
 {
   "expo": {
     "name": "U.E Fuerzas Aereas",
-    "slug": "ue-fuerzas-aereas",
-    "version": "1.0.1",
-    "orientation": "portrait",
+    "slug": "app-aereas",
+    "version": "1.0.0",
     "icon": "./assets/images/icon.png",
-    "scheme": "appcomiles",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true
-    },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true,
-      "package": "com.prolipa.appcomilesA"
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
-    },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ]
-    ],
-    "experiments": {
-      "typedRoutes": true
+      "package": "com.prolipa.aereas",
+      "versionCode": 1
     },
     "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "38136efe-8d07-444d-9e1b-9d92f189a25c"
-      },
       "environment": "development",
       "apiTimeout": 10000,
-      "enableLogging": true
-    }
+      "enableLogging": true,
+      "eas": {
+        "projectId": "d562a64e-5ac7-43b5-9f2a-43f1a7048d8c"
+      }
+    },
+    "owner": "prolipa-app"
   }
 }
