@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "App-Comiles",
-    "slug": "App-Comiles",
+    "name": "U.E Fuerzas Aereas",
+    "slug": "U.E Fuerzas Aereas",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -42,9 +42,11 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "815341d1-54c2-45b4-b4c8-4990570f9524"
+        "projectId": "d7b2a4ad-d645-4500-b442-d7497aaea482"
       },
-      "environment": "development"
+      "environment": "development",
+      "apiTimeout": 10000,
+      "enableLogging": true
     }
   }
 }

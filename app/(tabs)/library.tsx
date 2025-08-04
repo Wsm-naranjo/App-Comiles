@@ -6,13 +6,13 @@ import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
-    FlatList,
-    Image,
-    Modal,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  FlatList,
+  Image,
+  Modal,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -222,7 +222,8 @@ export default function LibraryScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-black">
-      <View className="p-6">
+      {/* Header fijo */}
+      <View className="px-6 pt-6 pb-4">
         {/* Header */}
         <View className="flex-row justify-between items-center mb-4">
           <View>
@@ -293,8 +294,10 @@ export default function LibraryScreen() {
             </TouchableOpacity>
           )}
         />
+      </View>
 
-        {/* Book List */}
+      {/* Book List - Flex 1 para que ocupe el espacio restante */}
+      <View className="flex-1 px-6">
         {librosLoading ? (
           <Text className="text-gray-400 text-center">Cargando libros...</Text>
         ) : librosError ? (
@@ -321,6 +324,8 @@ export default function LibraryScreen() {
                 <BookCardList libro={item} />
               )
             }
+            contentContainerStyle={{ paddingBottom: 20 }}
+            showsVerticalScrollIndicator={false}
           />
         )}
       </View>
