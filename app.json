@@ -17,7 +17,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.bastian0112.AppComiles"
+      "package": "com.prolipa.AppComilesTerrestres"
     },
     "web": {
       "bundler": "metro",

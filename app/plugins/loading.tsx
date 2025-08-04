@@ -107,7 +107,7 @@ export default function LoadingScreen() {
             Biblioteca Digital
           </Text>
           <Text className="text-gray-400 text-sm text-center mt-1">
-            Fuerzas Armadas del Ecuador
+            Fuerzas Terrestres del Ecuador
           </Text>
         </View>
 
