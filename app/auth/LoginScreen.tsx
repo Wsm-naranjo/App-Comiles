@@ -10,7 +10,10 @@ import { useState } from "react";
 import {
   ActivityIndicator,
   Image,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -198,91 +201,114 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-black px-6 justify-center">
-      <EnvironmentDebug 
-        visible={isDebugVisible} 
-        onClose={hideDebug} 
-      />
-      <View className="items-center mb-12">
-        <TouchableOpacity onPress={handleTap} activeOpacity={0.8}>
-          <Image
-            source={require("@/assets/images/fuerzaterrestre.png")}
-            className="w-[150px] h-[150px] mb-4"
-            resizeMode="contain"
-          />
-          <TapIndicator tapCount={tapCount} maxTaps={3} />
-        </TouchableOpacity>
-        <Text className="text-3xl font-bold text-white text-center">
-          Unidades Educativas Fuerzas Terrestres del Ecuador
-        </Text>
-      </View>
-
-      <View className="flex flex-col gap-2 ">
-        <TextInput
-          placeholder="Username"
-          placeholderTextColor="#aaa"
-          value={username}
-          onChangeText={setUsername}
-          className="bg-neutral-900 text-white p-4 rounded-md"
-        />
-        <View style={{ position: "relative" }}>
-          <TextInput
-            placeholder="Password"
-            placeholderTextColor="#aaa"
-            secureTextEntry={!showPassword}
-            value={password}
-            onChangeText={setPassword}
-            className="bg-neutral-900 text-white p-4 rounded-md pr-12"
-          />
-          <Pressable
-            onPress={() => setShowPassword((prev) => !prev)}
-            style={{
-              position: "absolute",
-              right: 10,
-              top: 0,
-              height: "100%",
-              justifyContent: "center",
-            }}
-            accessibilityLabel={
-              showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
-            }
-          >
-            <Feather
-              name={showPassword ? "eye-off" : "eye"}
-              size={22}
-              color="#aaa"
-            />
-          </Pressable>
-        </View>
-        <TouchableOpacity
-          className={`p-4 rounded-md items-center mt-2 ${
-            isLoading ? "bg-neutral-600" : "bg-neutral-700"
-          }`}
-          onPress={handleLogin}
-          disabled={isLoading}
+    <SafeAreaView className="flex-1 bg-black">
+      <KeyboardAvoidingView 
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
+        <ScrollView 
+          style={{ flex: 1 }}
+          contentContainerStyle={{ 
+            flexGrow: 1,
+            paddingHorizontal: 24,
+            paddingVertical: 20,
+            justifyContent: 'center'
+          }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          bounces={false}
         >
-          <View className="flex-row items-center">
-            {isLoading && (
-              <ActivityIndicator
-                size="small"
-                color="white"
-                style={{ marginRight: 8 }}
+          <EnvironmentDebug 
+            visible={isDebugVisible} 
+            onClose={hideDebug} 
+          />
+          <View className="items-center mb-12">
+            <TouchableOpacity onPress={handleTap} activeOpacity={0.8}>
+              <Image
+                source={require("@/assets/images/fuerzaterrestre.png")}
+                className="w-[150px] h-[150px] mb-4"
+                resizeMode="contain"
               />
-            )}
-            <Text className="text-white font-bold">
-              {isLoading ? "INICIANDO SESIÓN..." : "LOG IN"}
+              <TapIndicator tapCount={tapCount} maxTaps={3} />
+            </TouchableOpacity>
+            <Text className="text-3xl font-bold text-white text-center">
+              Unidades Educativas Fuerzas Terrestres del Ecuador
             </Text>
           </View>
-        </TouchableOpacity>
 
-        {error ? (
-          <Text style={{ color: "red", marginTop: 8 }}>{error}</Text>
-        ) : null}
-      </View>
+          <View className="flex flex-col gap-2">
+            <TextInput
+              placeholder="Username"
+              placeholderTextColor="#aaa"
+              value={username}
+              onChangeText={setUsername}
+              className="bg-neutral-900 text-white p-4 rounded-md"
+              autoCapitalize="none"
+              autoCorrect={false}
+              returnKeyType="next"
+              blurOnSubmit={false}
+            />
+            <View style={{ position: "relative" }}>
+              <TextInput
+                placeholder="Password"
+                placeholderTextColor="#aaa"
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
+                className="bg-neutral-900 text-white p-4 rounded-md pr-12"
+                autoCapitalize="none"
+                autoCorrect={false}
+                returnKeyType="done"
+                onSubmitEditing={handleLogin}
+              />
+              <Pressable
+                onPress={() => setShowPassword((prev) => !prev)}
+                style={{
+                  position: "absolute",
+                  right: 10,
+                  top: 0,
+                  height: "100%",
+                  justifyContent: "center",
+                }}
+                accessibilityLabel={
+                  showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                }
+              >
+                <Feather
+                  name={showPassword ? "eye-off" : "eye"}
+                  size={22}
+                  color="#aaa"
+                />
+              </Pressable>
+            </View>
+            <TouchableOpacity
+              className={`p-4 rounded-md items-center mt-2 ${
+                isLoading ? "bg-neutral-600" : "bg-neutral-700"
+              }`}
+              onPress={handleLogin}
+              disabled={isLoading}
+            >
+              <View className="flex-row items-center">
+                {isLoading && (
+                  <ActivityIndicator
+                    size="small"
+                    color="white"
+                    style={{ marginRight: 8 }}
+                  />
+                )}
+                <Text className="text-white font-bold">
+                  {isLoading ? "INICIANDO SESIÓN..." : "LOG IN"}
+                </Text>
+              </View>
+            </TouchableOpacity>
 
-      {/* <Pressable className="mt-6 items-center">
-        <Text className="text-neutral-400">Forgot password?</Text>
-      </Pressable> */}
+            {error ? (
+              <Text style={{ color: "red", marginTop: 8 }}>{error}</Text>
+            ) : null}
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
